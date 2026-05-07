@@ -1,0 +1,13 @@
+{
+  "name": "takazudo-claude-resources",
+  "owner": {
+    "name": "takazudo"
+  },
+  "plugins": [
+    {
+      "name": "claude-resources",
+      "source": ".",
+      "description": "Takazudo's personal Claude Code resources: skills, commands, agents, hooks, and scripts."
+    }
+  ]
+}

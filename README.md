@@ -16,10 +16,23 @@ My personal [Claude Code](https://docs.anthropic.com/en/docs/claude-code) config
 
 ## Usage
 
-Feel free to browse and borrow anything useful. To use a skill or command in your own setup, copy it into your `~/.claude/` directory:
+### Option A: Install as a Claude Code plugin (recommended)
+
+The repo ships with a Claude Code marketplace manifest. Install everything in one shot:
 
 ```
-~/.claude/
+/plugin marketplace add takazudo/claude-resources
+/plugin install claude-resources@takazudo-claude-resources
+```
+
+After install, Claude Code will see all bundled commands, skills, agents, and hooks. Use `/plugin disable` if you want to opt out of any of them.
+
+### Option B: Manual copy
+
+Browse and borrow anything useful. To use a skill or command in your own setup, copy it into your `$HOME/.claude/` directory:
+
+```
+$HOME/.claude/
 ├── commands/    # place command .md files here
 ├── skills/      # place skill directories here
 ├── agents/      # place agent .md files here

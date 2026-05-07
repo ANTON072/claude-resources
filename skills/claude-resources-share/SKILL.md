@@ -36,6 +36,7 @@ In normal mode (no flag), follow the original gates: ask for confirmation after 
 ## Excludes (apply to all rsync operations)
 
 - `node_modules/`
+- `.claude/` (stray nested config dirs inside subtrees, e.g. `skills/.claude/`)
 - `.docusaurus/`
 - `build/`
 - `dist/`
@@ -46,6 +47,14 @@ In normal mode (no flag), follow the original gates: ask for confirmation after 
 - `pnpm-lock.yaml`
 - `package-lock.json`
 - `target/`
+
+## Symlinks
+
+Skip symlinks during copy. Symlinks in `$HOME/.claude/skills/` typically point to project-local repos that do not exist on a fresh machine, so dereferencing or preserving them in the public bundle would break the install. The rsync flag `--no-links` skips them entirely.
+
+## Plugin manifests (preserved)
+
+The public repo contains `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json` so users can install the bundle via `/plugin marketplace add takazudo/claude-resources`. These files live ONLY in the public repo (not in `$HOME/.claude/`), and Step 3's cleanup loop must NOT delete `.claude-plugin/`.
 
 ## Workflow
 
@@ -91,15 +100,16 @@ done
 rm -f ./CLAUDE.md
 ```
 
-Then copy fresh from source using rsync. **IMPORTANT**: Pass each `--exclude` flag separately — do NOT store them in a shell variable, as variable expansion breaks glob patterns like `*.pyc`.
+Then copy fresh from source using rsync. **IMPORTANT**: Pass each `--exclude` flag separately — do NOT store them in a shell variable, as variable expansion breaks glob patterns like `*.pyc`. The `--no-links` flag is critical: it skips symlinked skills/commands/agents that point to project-local repos.
 
 ```bash
 SRC="$HOME/.claude"
 DST="$HOME/repos/p/claude-resources"
 
 for dir in commands skills agents hooks scripts; do
-  rsync -av \
+  rsync -av --no-links \
     --exclude=node_modules \
+    --exclude=.claude \
     --exclude=.docusaurus \
     --exclude=build \
     --exclude=dist \
@@ -117,7 +127,7 @@ cp "$SRC/CLAUDE.md" "$DST/CLAUDE.md"
 
 ### Step 4: Verify and clean
 
-After copying, verify no excluded artifacts leaked through:
+After copying, verify no excluded artifacts leaked through and confirm the plugin manifests are still in place:
 
 ```bash
 DST="$HOME/repos/p/claude-resources"
@@ -132,6 +142,21 @@ fi
 
 # Clean .DS_Store files
 find "$DST" -name .DS_Store -delete 2>/dev/null
+
+# Sanity check: plugin manifests must exist for marketplace install to work
+for f in .claude-plugin/marketplace.json .claude-plugin/plugin.json; do
+  if [ ! -f "$DST/$f" ]; then
+    echo "ERROR: Missing $f -- marketplace install will fail. Restore before pushing."
+  fi
+done
+
+# Sanity check: no symlinks should have leaked through
+leaked_links=$(find "$DST" -type l 2>/dev/null)
+if [ -n "$leaked_links" ]; then
+  echo "WARNING: Symlinks leaked through (should be skipped via --no-links):"
+  echo "$leaked_links"
+  find "$DST" -type l -delete 2>/dev/null
+fi
 ```
 
 ### Step 5: Summary
@@ -172,3 +197,5 @@ The following items are known and acceptable — do NOT flag them during the Ste
 - **Never skip Step 1.** The safety scan is mandatory every time.
 - **Never auto-confirm a non-clean scan.** In auto mode, only proceed when the scan is fully clean; any HIGH/MEDIUM finding stops the flow and requires user input. In normal mode, always wait for explicit user approval after the scan.
 - **Never store rsync excludes in a shell variable.** Pass each `--exclude` flag inline to avoid glob expansion issues.
+- **Never delete `.claude-plugin/`** during cleanup. Step 3 only removes `commands/`, `skills/`, `agents/`, `hooks/`, `scripts/`, and `CLAUDE.md` — the plugin manifests are public-repo-only files and must persist across shares.
+- **Never include symlinks.** Use `--no-links` in rsync. Symlinked skills/commands/agents point to project-local repos that do not exist on a fresh machine and would break installs from the marketplace.
