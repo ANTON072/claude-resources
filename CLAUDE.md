@@ -36,6 +36,4 @@
 ## Safety
 
 - `rm -rf`: relative paths only (`./path`, never `/absolute/path`)
-- Agent logs/artifacts go to `$HOME/cclogs/{repo-name}/` via save-file.js `{logdir}` placeholder. NEVER use `~` in file paths — `~` is NOT expanded in Node.js or non-login shell contexts. Always use `$HOME` or the `{logdir}` placeholder
 - Worktree prompt files and truly ephemeral temp files stay in `__inbox/` (gitignored)
-

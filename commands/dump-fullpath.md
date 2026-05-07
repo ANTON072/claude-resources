@@ -24,8 +24,8 @@ Output the absolute path on a single line with no additional text:
 
 ## Example
 
-If the previous message mentioned creating `0314_1430-reviewer-auth.md` via save-file.js:
+If the previous message mentioned `src/components/Button.tsx`:
 
 ```
-/Users/username/cclogs/my-project/0314_1430-reviewer-auth.md
+/Users/username/my-project/src/components/Button.tsx
 ```

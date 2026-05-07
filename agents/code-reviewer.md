@@ -79,17 +79,6 @@ Structure your review as follows:
 4. **Suggestions**: Improvements for code quality, performance, or maintainability
 5. **Questions**: Clarifications needed about design decisions or implementation choices
 6. **Minor Issues**: Style, formatting, or naming convention violations
-7. **Log Generation**: Create a review log using save-file.js with `{logdir}/` prefix. Use `reviewer-` slug prefix for the filename.
-
-### Log File
-
-Save a review log:
-
-- **Filename**: `{logdir}/{timestamp}-reviewer-{context}.md`
-- **Command**: `$HOME/.claude/scripts/save-file.js "{logdir}/{timestamp}-reviewer-{context}.md" "content"`
-- **Post-save**: run `pnpm dlx @takazudo/mdx-formatter --write <file.md>`
-- NEVER use `~` in paths — it won't expand in Node.js
-
 ## Important Constraints
 
 - **DO NOT** edit files directly unless explicitly instructed to do so

@@ -10,7 +10,6 @@ My personal [Claude Code](https://docs.anthropic.com/en/docs/claude-code) config
 | `skills/` | Skills — modular packages that extend Claude's capabilities |
 | `agents/` | Custom subagent definitions (code-reviewer, tdd-developer, etc.) |
 | `hooks/` | Hook scripts (e.g., IFTTT notification on stop) |
-| `scripts/` | Utility scripts (security checks, skill tooling) |
 | `doc/` | Docusaurus documentation site for browsing the resources |
 | `CLAUDE.md` | Global instructions applied to all projects |
 

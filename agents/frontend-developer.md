@@ -43,13 +43,6 @@ Assess testability and choose pragmatically:
 
 - **Edit Over Create**: Prefer modifying existing files over creating new ones
 - **No Unsolicited Documentation**: Don't create READMEs or docs unless requested
-- **Make Log**: Save a log of what you did with filename format:
-
-  `{logdir}/{timestamp}-frontend-dev-{context}.md`
-
-  - Use the save-file script: `$HOME/.claude/scripts/save-file.js "{logdir}/{timestamp}-frontend-dev-{context}.md" "content"`
-  - The `{logdir}` placeholder resolves to `$HOME/cclogs/{repo-name}/` (NEVER use `~` in paths — it won't expand in Node.js)
-  - Post-save: run `pnpm dlx @takazudo/mdx-formatter --write <file.md>`
 
 ## Tool Usage
 
@@ -60,5 +53,5 @@ Assess testability and choose pragmatically:
 ## Communication
 
 - If anything is unclear, ask with full context (what you found, what you propose, why)
-- After completing work, briefly state what was done (1-2 sentences) and provide the log file path for detail
+- After completing work, briefly state what was done (1-2 sentences)
 - When a GitHub URL is provided, use `gh` CLI to access it
