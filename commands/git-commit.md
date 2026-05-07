@@ -1,3 +1,8 @@
+---
+name: git-commit
+description: コミットメッセージを生成し、自動的にコミットを実行する。
+---
+
 # Git Auto-Commit
 
 コミットメッセージを生成し、自動的にコミットを実行する。
