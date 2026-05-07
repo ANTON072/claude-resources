@@ -1,32 +1,43 @@
 # claude-resources
 
-私の個人的な [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 設定：カスタムコマンド、スキル、エージェント、フック、スクリプト。
+私の個人的な [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 設定：カスタムコマンド、スキル、エージェント。
 
 ## 内容
 
 | ディレクトリ | 説明 |
 | ----------- | ---- |
-| `commands/` | カスタムスラッシュコマンド（`/commits`、`/pr`、`/purge-private-info` など） |
+| `commands/` | カスタムスラッシュコマンド |
 | `skills/` | スキル — Claudeの機能を拡張するモジュラーパッケージ |
-| `agents/` | カスタムサブエージェント定義（code-reviewer、tdd-developer など） |
-| `hooks/` | フックスクリプト（例：停止時のIFTTT通知） |
-| `doc/` | リソースを閲覧するためのDocusaurusドキュメントサイト |
+| `agents/` | カスタムサブエージェント定義 |
 | `CLAUDE.md` | すべてのプロジェクトに適用されるグローバル指示 |
 
+### コマンド
+
+| コマンド | 説明 |
+| -------- | ---- |
+| `/vpr` | 現在のPRをWebブラウザで開く |
+
+### スキル
+
+| スキル | 説明 |
+| ------ | ---- |
+| `claudemd-refactor` | CLAUDE.mdをディレクトリスコープの階層構造にリファクタリング・最適化する |
+| `custom-command-creator` | カスタムスラッシュコマンドを作成・管理する |
+| `pr` | インテリジェントなベースブランチ検出でプルリクエストを作成する |
+| `pr-revise` | 既存のPRのタイトルと説明を更新する |
+| `purge-private-info` | プライベート/機密情報をスキャンして削除・置換する |
+| `subagent-manage` | カスタムエージェントを作成・修正する |
+
+### エージェント
+
+| エージェント | モデル | 説明 |
+| ------------ | ------ | ---- |
+| `code-reviewer` | opus | コードレビュアー |
+| `frontend-developer` | sonnet | フロントエンド開発エージェント。TDDとUI実用テストを適用し自律的に動作する |
+| `researcher` | opus | リサーチャー |
+| `text-fixer` | haiku | テキスト修正エージェント |
+
 ## 使い方
-
-### オプションA：Claude Codeプラグインとしてインストール（推奨）
-
-このリポジトリにはClaude Codeマーケットプレイスマニフェストが含まれています。一度にすべてをインストールできます：
-
-```
-/plugin marketplace add takazudo/claude-resources
-/plugin install claude-resources@takazudo-claude-resources
-```
-
-インストール後、Claude Codeはバンドルされたすべてのコマンド、スキル、エージェント、フックを認識します。不要なものは `/plugin disable` で無効化できます。
-
-### オプションB：手動コピー
 
 必要なものを参照してお使いください。スキルやコマンドを自分の環境で使うには、`$HOME/.claude/` ディレクトリにコピーします：
 
@@ -34,16 +45,14 @@
 $HOME/.claude/
 ├── commands/    # コマンド .md ファイルをここに配置
 ├── skills/      # スキルディレクトリをここに配置
-├── agents/      # エージェント .md ファイルをここに配置
-├── hooks/       # フックスクリプトをここに配置
-└── scripts/     # ユーティリティスクリプトをここに配置
+└── agents/      # エージェント .md ファイルをここに配置
 ```
 
 コマンド、スキル、エージェントの詳細については[Claude Codeドキュメント](https://docs.anthropic.com/en/docs/claude-code)を参照してください。
 
 ## 免責事項
 
-これは私の個人設定で、現状のまま共有しています。一部のリソースは私固有の環境やワークフローを参照している場合があります。使用は自己責任で — 使用前に確認し、自分の環境に合わせて調整してください。
+これは私の個人設定で、現状のまま共有しています。一部のリソースは私固有の環境やワークフローを参照している場合があります。使用は自己責任で。
 
 ## ライセンス
 
