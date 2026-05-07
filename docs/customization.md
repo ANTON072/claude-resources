@@ -166,9 +166,6 @@ Copilot CLI や Codex CLI を使っていなければ不要。
 ## コマンド棚卸し
 
 - `bambulab-height-calculation.md` — Bambu Lab 3Dプリンタ高さ計算
-- `cpwd.md` — カレントディレクトリパスコピー
-- `dump-fullpath.md` — フルパスダンプ
-- `next-todo.md` — 次のTODO確認
 - `start-wt-dev.md` — worktree開発開始
 - `vpr.md` — ビジュアルPRレビュー
 
