@@ -22,35 +22,11 @@
 - No force push, no `--amend` unless explicitly permitted
 - No branch name reuse. Regular merge by default (not squash)
 
-## Git Commit/Push -- token-optimized /commits
-
-- `/commits` delegates to a Haiku subagent so the main Opus context only sees a summary, not the full git diff / staging reasoning.
-- Direct execution is the last-resort fallback if the subagent fails.
-- The old Copilot CLI (`gcom`/`gpush`) path was removed — too fragile for multi-turn stateful git work (see claude-settings#29).
-
-## CSS Coding
-
-- Before writing non-trivial CSS, invoke `/css-wisdom <topic>` to look up best practices
-- This covers: layout, typography, spacing, color, shadows, responsive, transitions, modern CSS
-
-## Dropbox
-
-Screenshots directory path is available as `$DROPBOX_SCREENSHOTS_DIR` env var (set in $HOME/.zshrc).
-
 ## Testing & Verification
 
-- Unit tests alone cannot prove visual correctness. If the change is UI/CSS/layout, verify with `/verify-ui` (computed styles) or `/headless-browser` (screenshots, interactions)
+- Unit tests alone cannot prove visual correctness. If the change is UI/CSS/layout, verify with computed styles or screenshots.
 - When user says "it's still broken" after you tested, escalate to a deeper testing level -- do not re-run the same test
-- Invoke `/test-wisdom` when unsure which testing approach fits the current situation
 - **NEVER suggest "clear browser cache" or "hard refresh" as a solution.** If the user says it's still broken, the code is still broken. Investigate the actual cause instead of blaming cache.
-
-## Reviewers & `-gcoc` (cheap-model) Caveat
-
-- Skills with a `-gcoc` variant (e.g. `/gcoc-review`, `/gcoc-2nd`, `/gcoc-research`, `/gcoc-stack-trace-read`) run Copilot CLI on the free/cheap GPT-4.1 tier. That model is smaller and lower-budget than the manager model running this session.
-- Treat `-gcoc` output like a **linter / surface-level mistake catcher**: typos, obvious bugs, missing null checks, style nits, simple logic errors. Useful, cheap, fast.
-- Be skeptical when `-gcoc` returns **architectural / design-level feedback** (suggesting refactors, alternate patterns, structural rewrites, "this should be a class/strategy/etc."). The manager model is usually larger and more capable, so weigh such feedback critically rather than applying it blindly.
-- This caution applies to all external reviewers in principle, but especially to `-gcoc` because of the model size gap.
-- When the user explicitly picks `-gcoc`, do not silently upgrade to a non-cheap reviewer — just stay aware of the limitation when synthesizing the result.
 
 ## GitHub Issues
 
