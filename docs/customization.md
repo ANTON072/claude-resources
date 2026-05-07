@@ -76,7 +76,6 @@ Copilot CLI や Codex CLI を使っていなければ不要。
 
 #### GitHub 操作
 - `gh-actions-wisdom` — GitHub Actions ベストプラクティス参照
-- `gh-fetch-issue` — GitHub Issueを画像ごとローカルに取得
 - `gh-issue-with-imgs` — 画像付きIssue作成
 - `dependabot-resolve` — Dependabot PR解決
 - `dev-gh-actions-doc-auto-merge` — GH Actionsドキュメント自動マージ
