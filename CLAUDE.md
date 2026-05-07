@@ -1,38 +1,38 @@
-# Global Instructions
+# グローバル指示
 
-## Tools & Runtime
+## ツール＆ランタイム
 
-- Check the project's package manager (pnpm, npm, etc.) before running install or script commands
-- `gh` CLI for GitHub operations (PRs, issues, API)
+- インストールやスクリプトコマンドを実行する前に、プロジェクトのパッケージマネージャ（pnpm、npm など）を確認する
+- GitHub操作（PR、Issue、API）には `gh` CLIを使用する
 
-## Code Style
+## コードスタイル
 
-- Prefer kebab-case for file names to avoid case-sensitivity issues, unless the project uses a different convention
+- ケース感度の問題を避けるため、ファイル名はkebab-caseを使用する（プロジェクトが異なる規約を使用している場合を除く）
 
-## Code Comments — Capture Hidden Spec/Context
+## コードコメント — 隠れた仕様・コンテキストを記録する
 
-- Default is **no comments** — well-named identifiers should explain what the code does.
-- Exception: when code embeds knowledge that lives **outside the codebase** — a product spec, an external API contract, a magic value imposed by a partner service, an undocumented platform quirk — leave a short comment. A future reader cannot recover this context by reading more code, and the source-of-truth document may be scattered, behind a login, or nowhere written down.
-- Concrete case: a frontend payload field like `bdidso: 10` is opaque on its own. Even if a spec exists somewhere, the next reader has no idea where to look. A one-liner — `// product-specific param required by API X; value is fixed by spec` — saves them from a fruitless search.
-- Test before adding: *"If I delete this comment, can a reasonable reader recover the meaning from code, identifiers, or obvious docs?"* If no, the comment earns its place.
-- Keep it to a single line of **why** / **where it comes from** — not a tutorial, not a re-statement of what the code already says.
+- デフォルトは**コメントなし** — 適切に名付けられた識別子がコードの内容を説明すべき。
+- 例外：コードが**コードベース外**に存在する知識を埋め込む場合 — 製品仕様、外部APIコントラクト、パートナーサービスが課したマジック値、ドキュメント化されていないプラットフォームの挙動 — 短いコメントを残す。将来の読者はコードを読むだけではこのコンテキストを回復できず、根拠となるドキュメントが散在していたり、ログイン必須だったり、どこにも書かれていなかったりする。
+- 具体例：`bdidso: 10` のようなフロントエンドのペイロードフィールドは単独では意味不明。仕様書がどこかに存在するとしても、次の読者はどこを見ればいいかわからない。一行コメント — `// API X が要求するプロダクト固有パラメータ；値は仕様で固定` — 無駄な調査から彼らを救う。
+- 追加前にテスト：*「このコメントを削除しても、合理的な読者がコード、識別子、明白なドキュメントから意味を回復できるか？」* Noなら、コメントはその価値を持つ。
+- **なぜ** / **どこから来るのか**の一行に留める — チュートリアルでも、コードが既に言っていることの言い換えでもなく。
 
-## Git Safety
+## Git安全性
 
-- No force push, no `--amend` unless explicitly permitted
-- No branch name reuse. Regular merge by default (not squash)
+- 明示的に許可されない限り、force pushも `--amend` も使用しない
+- ブランチ名の再使用禁止。デフォルトは通常のマージ（squashではない）
 
-## Testing & Verification
+## テスト＆検証
 
-- Unit tests alone cannot prove visual correctness. If the change is UI/CSS/layout, verify with computed styles or screenshots.
-- When user says "it's still broken" after you tested, escalate to a deeper testing level -- do not re-run the same test
-- **NEVER suggest "clear browser cache" or "hard refresh" as a solution.** If the user says it's still broken, the code is still broken. Investigate the actual cause instead of blaming cache.
+- ユニットテスト単独では視覚的な正確性を証明できない。UI/CSS/レイアウトの変更は、computed stylesまたはスクリーンショットで確認する。
+- テスト後にユーザーが「まだ壊れている」と言った場合、より深いテストレベルにエスカレートする — 同じテストを再実行しない
+- **「ブラウザキャッシュをクリア」や「ハードリフレッシュ」を解決策として提案しない。** ユーザーが「まだ壊れている」と言ったら、コードはまだ壊れている。キャッシュのせいにするのではなく、実際の原因を調査する。
 
 ## GitHub Issues
 
-- When creating a GitHub issue that needs images (screenshots, diagrams, etc.), use `/gh-issue-with-imgs` to upload images as release assets and embed them in the issue body. `gh issue create` cannot attach images natively.
+- 画像（スクリーンショット、図など）が必要なGitHub Issueを作成する場合は、`/gh-issue-with-imgs` を使用して画像をリリースアセットとしてアップロードし、Issue本文に埋め込む。`gh issue create` はネイティブに画像を添付できない。
 
-## Safety
+## 安全性
 
-- `rm -rf`: relative paths only (`./path`, never `/absolute/path`)
-- Worktree prompt files and truly ephemeral temp files stay in `__inbox/` (gitignored)
+- `rm -rf`：相対パスのみ（`./path`、`/absolute/path` は絶対に使用しない）
+- ワークツリーのプロンプトファイルと本当に一時的なテンプファイルは `__inbox/` に保存する（gitignored）

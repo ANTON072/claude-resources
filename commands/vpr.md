@@ -1,13 +1,13 @@
 ---
 name: vpr
-description: Open the current PR in the web browser.
+description: 現在のPRをWebブラウザで開く。
 disable-model-invocation: true
 ---
 
-# View PR in Browser
+# ブラウザでPRを表示する
 
-Open the current branch's pull request in the default web browser.
+現在のブランチのPullRequestをデフォルトのWebブラウザで開きます。
 
-## Instructions
+## 手順
 
-1. Run `gh pr view --web`
+1. `gh pr view --web` を実行する

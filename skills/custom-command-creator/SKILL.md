@@ -1,118 +1,118 @@
 ---
 name: custom-command-creator
-description: "Create and manage custom slash commands in Claude Code. Use when: (1) User wants to create a new slash command, (2) User asks about /commands or custom commands, (3) User wants to automate frequent prompts, (4) User says 'create global command' or 'create local command', (5) User mentions 'command-creator'. Covers creation (global/local), command anatomy, frontmatter, arguments, bash, file references, namespacing, command vs skill comparison."
+description: "Claude Codeでカスタムスラッシュコマンドを作成・管理する。使用タイミング：(1) ユーザーが新しいスラッシュコマンドを作りたい場合、(2) ユーザーが/commandsやカスタムコマンドについて質問した場合、(3) ユーザーが頻繁に使うプロンプトを自動化したい場合、(4) ユーザーが「グローバルコマンドを作成」または「ローカルコマンドを作成」と言った場合、(5) ユーザーが「command-creator」に言及した場合。作成（グローバル/ローカル）、コマンドの解剖学、フロントマター、引数、bash、ファイル参照、名前空間、コマンドとスキルの比較をカバーする。"
 ---
 
-# Custom Command Creator
+# カスタムコマンドクリエーター
 
-Guide for creating effective custom slash commands in Claude Code.
+Claude Codeで効果的なカスタムスラッシュコマンドを作成するためのガイド。
 
-## What Are Custom Commands?
+## カスタムコマンドとは？
 
-Custom slash commands are Markdown files that define reusable prompts. They're simpler than skills - single files for quick, frequently-used prompts.
+カスタムスラッシュコマンドは再利用可能なプロンプトを定義するMarkdownファイルです。スキルよりシンプルで、頻繁に使う単一ファイルのプロンプトです。
 
-**Use commands when:**
+**コマンドを使う場面：**
 
-- Same prompt is used repeatedly
-- Prompt fits in one file
-- Explicit control over when to run
+- 同じプロンプトを繰り返し使う場合
+- プロンプトが1ファイルに収まる場合
+- いつ実行するかを明示的に制御したい場合
 
-**Use skills instead when:**
+**スキルを使う場面：**
 
-- Claude should auto-detect the capability
-- Multiple files or scripts needed
-- Complex workflows with validation steps
+- Claudeが機能を自動検出すべき場合
+- 複数のファイルやスクリプトが必要な場合
+- 検証ステップを含む複雑なワークフローの場合
 
-## Command Locations
+## コマンドの場所
 
-| Location | Path | Scope |
-|----------|------|-------|
-| Project | `.claude/commands/<name>.md` | This project only (shows as "project") |
-| Personal | `$HOME/.claude/commands/<name>.md` | All your projects (shows as "user") |
+| 場所 | パス | スコープ |
+| ---- | ---- | ------ |
+| プロジェクト | `.claude/commands/<name>.md` | このプロジェクトのみ（"project"として表示） |
+| 個人 | `$HOME/.claude/commands/<name>.md` | すべてのプロジェクト（"user"として表示） |
 
-**Priority**: Project commands override personal commands with same name.
+**優先順位**：プロジェクトのコマンドが同名の個人コマンドを上書きする。
 
-## Command Anatomy
+## コマンドの構造
 
-Every command is a single Markdown file with optional frontmatter:
+すべてのコマンドはオプションのフロントマターを持つ単一のMarkdownファイルです：
 
 ```markdown
 ---
-description: Brief description of what the command does
+description: コマンドが何をするかの簡単な説明
 allowed-tools: Bash(git:*), Read
 argument-hint: [filename] [options]
 ---
 
-# Command Instructions
+# コマンドの指示
 
-Your prompt content here with $ARGUMENTS placeholder.
+$ARGUMENTS プレースホルダーを含むプロンプトコンテンツ。
 ```
 
-See [frontmatter.md](references/frontmatter.md) for all available fields.
+利用可能なすべてのフィールドについては [frontmatter.md](references/frontmatter.md) を参照。
 
-## Core Features
+## コア機能
 
-### Arguments
+### 引数
 
-Pass dynamic values to commands using placeholders:
+プレースホルダーを使ってコマンドに動的な値を渡す：
 
-**All arguments** - `$ARGUMENTS`:
+**すべての引数** - `$ARGUMENTS`：
 
 ```markdown
-Fix issue #$ARGUMENTS following our coding standards
+コーディング標準に従ってIssue #$ARGUMENTS を修正する
 ```
 
-Usage: `/fix-issue 123 high-priority` → `$ARGUMENTS` = "123 high-priority"
+使用例：`/fix-issue 123 high-priority` → `$ARGUMENTS` = "123 high-priority"
 
-**Positional arguments** - `$1`, `$2`, etc.:
+**位置引数** - `$1`、`$2` など：
 
 ```markdown
-Review PR #$1 with priority $2 and assign to $3
+優先度 $2 でPR #$1 をレビューし、$3 にアサインする
 ```
 
-Usage: `/review-pr 456 high alice` → `$1`="456", `$2`="high", `$3`="alice"
+使用例：`/review-pr 456 high alice` → `$1`="456"、`$2`="high"、`$3`="alice"
 
-### Bash Execution
+### Bash実行
 
-Run shell commands before the prompt is sent using `!`command`` syntax:
+`!`コマンド`` 構文を使ってプロンプト送信前にシェルコマンドを実行する：
 
 ```markdown
 ---
 allowed-tools: Bash(git:*)
 ---
 
-## Context
-- Git status: !`git status`
-- Current branch: !`git branch --show-current`
-- Recent commits: !`git log --oneline -5`
+## コンテキスト
+- Gitステータス: !`git status`
+- 現在のブランチ: !`git branch --show-current`
+- 最近のコミット: !`git log --oneline -5`
 
-## Task
-Create a commit based on the above changes.
+## タスク
+上記の変更に基づいてコミットを作成する。
 ```
 
-**Important**: Must include `Bash` in `allowed-tools` for this to work.
+**重要**：これを機能させるには `allowed-tools` に `Bash` を含める必要がある。
 
-### File References
+### ファイル参照
 
-Include file contents using `@` prefix:
+`@` プレフィックスを使ってファイルの内容を含める：
 
 ```markdown
-Review the implementation in @src/utils/helpers.js
+@src/utils/helpers.js の実装をレビューする
 
-Compare @src/old.js with @src/new.js
+@src/old.js と @src/new.js を比較する
 ```
 
-### Extended Thinking
+### 拡張思考
 
-Include [thinking keywords](/ja/common-workflows#use-extended-thinking) to trigger extended thinking mode:
+拡張思考モードをトリガーするには[思考キーワード](/ja/common-workflows#use-extended-thinking)を含める：
 
 ```markdown
-Think deeply about the architecture of this codebase.
+このコードベースのアーキテクチャについて深く考えてください。
 ```
 
-## Namespacing
+## 名前空間
 
-Use subdirectories to organize related commands:
+サブディレクトリを使って関連コマンドを整理する：
 
 ```
 .claude/commands/
@@ -123,186 +123,186 @@ Use subdirectories to organize related commands:
 └── deploy.md         → /deploy (project)
 ```
 
-Same-named commands in different subdirectories are distinguished by their namespace label.
+異なるサブディレクトリの同名コマンドは名前空間ラベルで区別される。
 
-## Command Creation Workflow
+## コマンド作成ワークフロー
 
-When the user asks to create a command, follow this workflow.
+ユーザーがコマンドの作成を求めた場合、このワークフローに従う。
 
-### Step 1: Determine Command Name and Location
+### ステップ1：コマンド名と場所を決める
 
-If the user provides a name, use it. If they describe what they want, derive an appropriate kebab-case name.
+ユーザーが名前を指定した場合はそれを使用。何をしたいかを説明した場合は適切なkebab-case名を導き出す。
 
-**Choose location based on context:**
+**コンテキストに基づいて場所を選択：**
 
-- **Global command** (`$HOME/.claude/commands/<name>.md`): User says "global", or wants it available across all projects
-- **Local/project command** (`.claude/commands/<name>.md`): User says "local" or "project", or wants it scoped to current repo
-- **If unclear**: Ask the user which they prefer
+- **グローバルコマンド** (`$HOME/.claude/commands/<name>.md`)：ユーザーが「グローバル」と言った場合、またはすべてのプロジェクトで使いたい場合
+- **ローカル/プロジェクトコマンド** (`.claude/commands/<name>.md`)：ユーザーが「ローカル」または「プロジェクト」と言った場合、または現在のリポジトリにスコープしたい場合
+- **不明な場合**：どちらを希望するかユーザーに質問する
 
-For local commands, find the project root first:
+ローカルコマンドの場合、まずプロジェクトルートを見つける：
 
 ```bash
-git rev-parse --show-toplevel  # Use repo root, or cwd if not a git repo
+git rev-parse --show-toplevel  # gitリポジトリのルートを使用、なければcwd
 ```
 
-Ensure the target directory exists before writing.
+書き込む前にターゲットディレクトリが存在することを確認する。
 
-### Step 2: Gather Details
+### ステップ2：詳細を収集する
 
-Ask the user if needed:
+必要に応じてユーザーに質問する：
 
-- What should the command do?
-- Does it need arguments? If so, what arguments?
-- Should it use bash execution (`!`command``) for dynamic context?
-- Should it restrict allowed tools?
+- コマンドは何をすべきか？
+- 引数が必要か？必要な場合、どんな引数か？
+- 動的なコンテキストのためにbash実行（`!`コマンド``）を使うべきか？
+- 許可するツールを制限すべきか？
 
-### Step 3: Write the Command File
+### ステップ3：コマンドファイルを書く
 
-Create the command file with proper structure:
+適切な構造でコマンドファイルを作成する：
 
-**Required best practices:**
+**必須のベストプラクティス：**
 
-- Always include frontmatter with `description` field
-- Use `argument-hint` if the command accepts arguments (e.g., `[filename]`, `[pr-number]`)
-- Use `$ARGUMENTS` for all args or `$1`, `$2` for positional args
-- If using bash execution, include `allowed-tools` in frontmatter
-- If manual-only invocation needed, add `disable-model-invocation: true`
+- 常に `description` フィールドを含むフロントマターを入れる
+- コマンドが引数を受け付ける場合は `argument-hint` を使用する（例：`[filename]`、`[pr-number]`）
+- すべての引数に `$ARGUMENTS`、位置引数に `$1`、`$2` を使用する
+- bash実行を使う場合は、フロントマターに `allowed-tools` を含める
+- 手動のみの呼び出しが必要な場合は `disable-model-invocation: true` を追加する
 
-**Template:**
+**テンプレート：**
 
 ```markdown
 ---
-description: Brief description of what the command does
+description: コマンドが何をするかの簡単な説明
 argument-hint: [expected-args]
 allowed-tools: Bash(git:*), Read
 ---
 
-# Command Title
+# コマンドタイトル
 
-Clear instructions for what Claude should do.
+Claudeが何をすべきかの明確な指示。
 
-## Context (if using bash execution)
-- Dynamic info: !`git status --short`
+## コンテキスト（bash実行を使う場合）
+- 動的情報: !`git status --short`
 
-## Task
-What to accomplish with $ARGUMENTS.
+## タスク
+$ARGUMENTS で達成すること。
 ```
 
-### Step 4: Format the command file
+### ステップ4：コマンドファイルのフォーマット
 
-Format the created command file using the mdx-formatter to ensure consistent markdown formatting:
+作成したコマンドファイルをmdx-formatterでフォーマットして、一貫したmarkdownフォーマットを確保する：
 
 ```bash
 pnpm dlx @takazudo/mdx-formatter --write <path-to-command-file.md>
 ```
 
-### Step 5: Verify and Report
+### ステップ5：確認と報告
 
-After creating the file:
+ファイルを作成した後：
 
-1. Confirm the file exists at the target path
-2. Show the user the full content of the created file
-3. Tell them they can use it with `/<command-name>`
-4. **For global commands**: Remind that project-level commands take priority over global commands with the same name
-5. **For local commands**: Suggest committing to git so the team can share it
+1. ターゲットパスにファイルが存在することを確認する
+2. 作成されたファイルの全内容をユーザーに表示する
+3. `/<command-name>` で使えることを伝える
+4. **グローバルコマンドの場合**：同名のグローバルコマンドはプロジェクトレベルのコマンドに優先されることを念のため伝える
+5. **ローカルコマンドの場合**：チームが共有できるようにgitにコミットすることを提案する
 
-### Key Rules for Creation
+### 作成の主要ルール
 
-- Command filename must be kebab-case (lowercase, hyphens): `my-command.md`
-- Always include `description` in frontmatter - commands without it are harder to discover
-- Keep the command focused on a single task
-- Use `$ARGUMENTS` / `$1` / `$2` for dynamic values, not hardcoded values
-- Don't overcomplicate - a command is a single Markdown file for a reusable prompt
-- Local commands are great for project-specific workflows (deploy, test patterns, review checklists)
-- **File paths must use `$HOME` instead of `~`**: When command instructions reference home directory paths (e.g., log directories, config files), always write `$HOME/cclogs/...` or `$HOME/.claude/...`, NEVER `$HOME/cclogs/...` or `$HOME/.claude/...`. The `~` character is only expanded by interactive shell login contexts. In Node.js `fs` operations, non-login shells, and many tool contexts, `~` is treated as a literal character, which creates an actual directory named `$HOME/` inside the working directory. This applies to paths in the command body text, bash execution snippets, and any instructions that an agent will follow
+- コマンドのファイル名はkebab-case（小文字、ハイフン）でなければならない：`my-command.md`
+- フロントマターに常に `description` を含める — ないコマンドは見つけにくい
+- コマンドを単一のタスクに集中させる
+- 動的な値には `$ARGUMENTS` / `$1` / `$2` を使用し、ハードコードされた値は使わない
+- 複雑にしすぎない — コマンドは再利用可能なプロンプトのための単一のMarkdownファイル
+- ローカルコマンドはプロジェクト固有のワークフロー（デプロイ、テストパターン、レビューチェックリスト）に最適
+- **ファイルパスには `~` の代わりに `$HOME` を使う**：コマンドの指示がホームディレクトリのパス（ログディレクトリ、設定ファイルなど）を参照する場合、常に `$HOME/cclogs/...` や `$HOME/.claude/...` と書き、決して `~/...` は使わない。`~` 文字はインタラクティブなシェルのログインコンテキストでのみ展開される。Node.jsの `fs` 操作、非ログインシェル、多くのツールコンテキストでは、`~` はリテラル文字として扱われ、ワーキングディレクトリ内に `~/` という名前のディレクトリが実際に作成される。これはコマンド本文テキスト、bash実行スニペット、エージェントが従うすべての指示のパスに適用される
 
-## Examples
+## 例
 
-### Simple Review Command
+### シンプルなレビューコマンド
 
 ```markdown
 ---
-description: Quick code review
+description: クイックコードレビュー
 ---
 
-Review this code for:
-- Security vulnerabilities
-- Performance issues
-- Code style violations
+このコードを以下の点でレビューする：
+- セキュリティの脆弱性
+- パフォーマンスの問題
+- コードスタイルの違反
 ```
 
-### Git Commit with Context
+### コンテキスト付きGitコミット
 
 ```markdown
 ---
-description: Create a git commit with context
+description: コンテキスト付きでgitコミットを作成する
 allowed-tools: Bash(git:*)
 ---
 
-## Context
-- Status: !`git status`
+## コンテキスト
+- ステータス: !`git status`
 - Diff: !`git diff HEAD`
-- Branch: !`git branch --show-current`
-- Recent commits: !`git log --oneline -5`
+- ブランチ: !`git branch --show-current`
+- 最近のコミット: !`git log --oneline -5`
 
-## Task
-Create a single git commit for the staged changes.
-Message should be concise and follow conventional commits.
+## タスク
+ステージングされた変更に対して単一のgitコミットを作成する。
+メッセージは簡潔でconventional commitsに従うこと。
 ```
 
-### PR Review with Arguments
+### 引数付きPRレビュー
 
 ```markdown
 ---
-description: Review a pull request
+description: プルリクエストをレビューする
 argument-hint: [pr-number]
 allowed-tools: Bash(gh:*)
 ---
 
-## PR Context
-- PR info: !`gh pr view $1`
-- PR diff: !`gh pr diff $1`
-- PR comments: !`gh pr view $1 --comments`
+## PRコンテキスト
+- PR情報: !`gh pr view $1`
+- PRのdiff: !`gh pr diff $1`
+- PRのコメント: !`gh pr view $1 --comments`
 
-## Task
-Review PR #$1 for:
-1. Code quality and best practices
-2. Potential bugs or edge cases
-3. Security concerns
-4. Test coverage
+## タスク
+PR #$1 を以下の観点でレビューする：
+1. コードの品質とベストプラクティス
+2. 潜在的なバグやエッジケース
+3. セキュリティの懸念
+4. テストカバレッジ
 ```
 
-### Model-Specific Command
+### モデル指定コマンド
 
 ```markdown
 ---
-description: Complex analysis with specific model
+description: 特定のモデルを使った複雑な分析
 model: claude-sonnet-4-20250514
 ---
 
-Perform detailed analysis of $ARGUMENTS.
+$ARGUMENTS の詳細な分析を実行する。
 ```
 
-## Preventing Auto-Invocation
+## 自動起動の防止
 
-To prevent Claude from invoking a command automatically via the Skill tool:
+ClaudeがSkillツールを通じてコマンドを自動的に起動することを防ぐには：
 
 ```markdown
 ---
-description: Deploy to production (manual only)
+description: 本番環境へのデプロイ（手動のみ）
 disable-model-invocation: true
 ---
 
-Deploy the application to production.
+アプリケーションを本番環境にデプロイする。
 ```
 
-## Command-Scoped Hooks
+## コマンドスコープのフック
 
-Define hooks that run only during command execution:
+コマンド実行中のみ実行されるフックを定義する：
 
 ```markdown
 ---
-description: Deploy with validation
+description: バリデーション付きデプロイ
 hooks:
   PreToolUse:
     - matcher: "Bash"
@@ -312,32 +312,32 @@ hooks:
           once: true
 ---
 
-Deploy to staging environment.
+ステージング環境にデプロイする。
 ```
 
-The `once: true` option runs the hook only once per session.
+`once: true` オプションはフックをセッションごとに一回だけ実行する。
 
-## Troubleshooting
+## トラブルシューティング
 
-### Command not appearing
+### コマンドが表示されない
 
-1. Check file is in correct location (`.claude/commands/` or `$HOME/.claude/commands/`)
-2. Verify `.md` extension
-3. Run `/help` to see available commands
+1. ファイルが正しい場所にあるか確認（`.claude/commands/` または `$HOME/.claude/commands/`）
+2. `.md` 拡張子を確認
+3. `/help` を実行して利用可能なコマンドを確認
 
-### Arguments not working
+### 引数が機能しない
 
-1. Use `$ARGUMENTS` for all args or `$1`, `$2` for positional
-2. Check for typos in placeholder names
+1. すべての引数に `$ARGUMENTS`、位置引数に `$1`、`$2` を使用
+2. プレースホルダー名のタイポを確認
 
-### Bash execution failing
+### Bash実行が失敗する
 
-1. Ensure `allowed-tools: Bash(...)` is in frontmatter
-2. Check command syntax is correct
-3. Verify the shell command works standalone
+1. フロントマターに `allowed-tools: Bash(...)` があることを確認
+2. コマンド構文が正しいことを確認
+3. シェルコマンドが単体で動作することを確認
 
-## Related Resources
+## 関連リソース
 
-- [Skills](/ja/skills): For complex multi-file capabilities
-- [Hooks](/ja/hooks): For automated workflows around tool events
-- [Permissions](/ja/iam): For controlling tool access
+- [スキル](/ja/skills)：複雑な複数ファイルの機能向け
+- [フック](/ja/hooks)：ツールイベント周りの自動化ワークフロー向け
+- [パーミッション](/ja/iam)：ツールアクセスの制御向け

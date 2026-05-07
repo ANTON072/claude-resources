@@ -1,14 +1,14 @@
 ---
 name: cpwd
-description: Copy current working directory to clipboard using pbcopy.
+description: pbcopyを使用してカレントワーキングディレクトリをクリップボードにコピーする。
 disable-model-invocation: true
 ---
 
-# Copy Working Directory
+# ワーキングディレクトリのコピー
 
-Copy the current working directory path to the clipboard.
+カレントワーキングディレクトリのパスをクリップボードにコピーします。
 
-## Instructions
+## 手順
 
-1. Run `pwd | pbcopy`
-2. Output the copied path to confirm
+1. `pwd | pbcopy` を実行する
+2. コピーされたパスを確認として出力する

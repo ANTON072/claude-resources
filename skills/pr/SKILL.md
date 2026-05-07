@@ -1,157 +1,157 @@
 ---
 name: pr
-description: "Create a pull request with intelligent base branch detection. Use when: (1) User says 'create pr', 'make pr', or 'open pr', (2) User wants to create a PR from the current branch, (3) User has finished work on a feature branch and needs a PR. Auto-detects base branch from conversation, git history, or repo default."
+description: "インテリジェントなベースブランチ検出でプルリクエストを作成する。使用タイミング：(1) ユーザーが「PRを作成」「PRを作る」「PRを開く」と言った場合、(2) ユーザーが現在のブランチからPRを作成したい場合、(3) ユーザーがフィーチャーブランチでの作業を完了してPRが必要な場合。会話、gitの履歴、またはリポジトリのデフォルトからベースブランチを自動検出する。"
 argument-hint: "[target-branch]"
 ---
 
-# PR Command
+# PRコマンド
 
-Create a pull request with automatic base branch detection from conversation history, git log, or repository default.
+会話履歴、gitログ、またはリポジトリのデフォルトからの自動ベースブランチ検出でプルリクエストを作成します。
 
-## Usage
+## 使い方
 
-- `/pr` - Create PR with auto-detected base branch
-- `/pr <target-branch>` - Create PR targeting the specified branch
+- `/pr` — 自動検出されたベースブランチでPRを作成する
+- `/pr <target-branch>` — 指定されたブランチを対象とするPRを作成する
 
-## Steps
+## 手順
 
-### 1. Verify Current State
+### 1. 現在の状態を確認する
 
 ```bash
 git status
 git branch --show-current
 ```
 
-Ensure you're on a feature branch (not main/master/develop).
+フィーチャーブランチにいることを確認する（main/master/developではない）。
 
-### 2. Determine Base Branch
+### 2. ベースブランチを決定する
 
-**Priority order for base branch detection:**
+**ベースブランチ検出の優先順位：**
 
-1. **Explicit argument**: If `<target-branch>` is provided, use it directly
-2. **Conversation context**: Search conversation history for mentions of:
-- "based on", "branch from", "create branch from"
-- PR context or issue references that mention a target branch
-- Recent git commands showing branch creation
-3. **Git history**: Auto-detect from git log and merge-base
-4. **Repository default**: Use the default branch as fallback
+1. **明示的な引数**：`<target-branch>` が提供された場合は直接使用する
+2. **会話のコンテキスト**：以下の会話履歴を検索する：
+   - "based on"、"branch from"、"create branch from"
+   - 対象ブランチを言及するPRのコンテキストまたはIssue参照
+   - ブランチ作成を示す最近のgitコマンド
+3. **gitの履歴**：gitログとmerge-baseから自動検出する
+4. **リポジトリのデフォルト**：フォールバックとしてデフォルトブランチを使用する
 
-#### Conversation History Check
+#### 会話履歴の確認
 
-Search the current conversation for clues about the base branch:
+ベースブランチに関する手がかりを現在の会話から検索する：
 
-- Look for phrases like "create branch from develop", "based on feature-x"
-- Check if user mentioned which branch they started from
-- Look for issue/PR context that indicates the target
+- 「developから作成」「feature-xに基づいて」などのフレーズを探す
+- ユーザーがどのブランチから開始したかを言及しているか確認する
+- 対象を示すIssue/PRのコンテキストを探す
 
-#### Git History Detection
+#### gitの履歴からの検出
 
 ```bash
-# Fetch latest remote refs
+# 最新のリモートrefsを取得
 git fetch origin
 
-# Find merge-base with candidate branches
+# 候補ブランチとのmerge-baseを検索
 for branch in main master develop staging; do
   git merge-base HEAD origin/$branch 2>/dev/null && echo "Found: $branch"
 done
 
-# Check which branch has the closest merge-base
-# The branch with most recent common ancestor is likely the parent
+# どのブランチが最も近いmerge-baseを持つか確認
+# 最近の共通の祖先を持つブランチが親の可能性が高い
 ```
 
-#### Repository Default Fallback
+#### リポジトリのデフォルトへのフォールバック
 
 ```bash
-# Get the default branch
+# デフォルトブランチを取得
 gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'
 ```
 
-### 3. Check for Existing PR
+### 3. 既存のPRを確認する
 
 ```bash
 gh pr list --head $(git branch --show-current)
 ```
 
-If PR exists, ask user if they want to view or update it.
+PRが存在する場合は、閲覧するか更新するかユーザーに確認する。
 
-### 4. Analyze Changes
+### 4. 変更を分析する
 
 ```bash
-# Get commits
+# コミットを取得
 git log origin/<base-branch>..HEAD --oneline
 
-# Get file changes
+# ファイルの変更を取得
 git diff origin/<base-branch>..HEAD --stat
 ```
 
-### 5. Confirm with User
+### 5. ユーザーに確認する
 
-Before creating, confirm:
+作成前に確認する：
 
-- **Current branch**: `<branch-name>`
-- **Target base branch**: `<base-branch>` (with detection method: "specified", "from conversation", "auto-detected", or "default")
-- **Commits**: Number of commits to include
-- **Suggested PR title**: Based on commits/branch name
+- **現在のブランチ**：`<branch-name>`
+- **対象ベースブランチ**：`<base-branch>`（検出方法：「指定」「会話から」「自動検出」「デフォルト」）
+- **コミット**：含まれるコミット数
+- **提案するPRタイトル**：コミット/ブランチ名に基づいて
 
-### 6. Push and Create PR
+### 6. プッシュしてPRを作成する
 
-**Optional: Copilot-assisted body draft**
+**オプション：Copilotによる本文の下書き**
 
-Before drafting the body manually, attempt to get a Copilot-drafted body:
+本文を手動で下書きする前に、Copilotによる本文の下書きを試みる：
 
 ```bash
 DRAFT=$($HOME/.claude/skills/gco/scripts/gco-pr-body.sh "<base-branch>" 2>/dev/null || true)
 ```
 
-If `$DRAFT` is non-empty, use it as the starting point for the body. Claude must still review and adjust it — fill any gaps, fix inaccuracies, and ensure tone/completeness. If the script fails or returns empty, draft the body directly.
+`$DRAFT` が空でない場合は、本文の出発点として使用する。Claudeは必ずそれを確認・調整する — 抜けを補完し、不正確な点を修正し、トーン/完全性を確保する。スクリプトが失敗または空を返した場合は、本文を直接下書きする。
 
 ```bash
-# Push if needed
+# 必要に応じてプッシュ
 git push -u origin $(git branch --show-current)
 
-# Create PR
+# PRを作成
 gh pr create \
   --base <base-branch> \
   --title "<title>" \
   --body "$(cat <<'EOF'
-## Summary
-<description>
+## サマリー
+<説明>
 
-## Changes
-- <change 1>
-- <change 2>
+## 変更内容
+- <変更1>
+- <変更2>
 
-## Test Plan
-<testing instructions>
+## テストプラン
+<テスト手順>
 EOF
 )"
 ```
 
-Copilot output is NEVER applied verbatim — always review and adjust before creating the PR.
+Copilotの出力はそのまま適用しない — PRを作成する前に必ず確認・調整する。
 
-### 7. Report Result
+### 7. 結果を報告する
 
-Display:
+以下を表示する：
 
 - PR URL
-- PR number
-- Base branch (and how it was determined)
-- Head branch
+- PR番号
+- ベースブランチ（どのように決定されたか）
+- ヘッドブランチ
 
-## Detection Logic
+## 検出ロジック
 
-The command uses this logic to find the base branch:
+このコマンドはベースブランチを見つけるために以下のロジックを使用する：
 
-1. **User-specified**: Highest priority - use the argument directly
-2. **Conversation analysis**: Check conversation for branch context
-3. **Git merge-base**: Find closest common ancestor with candidate branches
-4. **Default branch**: Ultimate fallback using `gh repo view`
+1. **ユーザー指定**：最高優先度 — 引数を直接使用する
+2. **会話分析**：ブランチのコンテキストを会話から確認する
+3. **gitのmerge-base**：候補ブランチとの最も近い共通の祖先を見つける
+4. **デフォルトブランチ**：`gh repo view` を使用した最終フォールバック
 
-If detection is ambiguous, ask the user to clarify before creating the PR.
+検出が曖昧な場合は、PRを作成する前にユーザーに明確化を求める。
 
-## Important Notes
+## 重要な注意事項
 
-- Never assume main/master without verification
-- Always inform user how the base branch was determined
-- Verify branch is pushed before creating PR
-- Include meaningful PR title and description
+- 確認なしにmain/masterを仮定しない
+- ベースブランチがどのように決定されたかを常にユーザーに伝える
+- PRを作成する前にブランチがプッシュされていることを確認する
+- 意味のあるPRタイトルと説明を含める

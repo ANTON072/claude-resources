@@ -1,26 +1,26 @@
 ---
-description: Queue the next task to do after the current one finishes
+description: 現在のタスクが完了した後に実行する次のタスクをキューに入れる
 disable-model-invocation: true
 argument-hint:
-  - task description
+  - タスクの説明
 ---
 
-# Queue Next Task
+# 次のタスクをキューに入れる
 
-The user is sending this message to queue a task for you to do next. They are NOT asking you to stop your current work.
+ユーザーはこのメッセージを使って、次に実行するタスクをキューに入れています。現在の作業を止めるよう求めているわけでは**ありません**。
 
-## Critical Rules
+## 重要なルール
 
-1. **DO NOT stop or interrupt your current task.** The user is worried you will abandon your work-in-progress if they send a new message. Continue what you are doing.
-2. **Acknowledge the queued task briefly** (one short line), then immediately resume your current work.
-3. **AUTOMATICALLY start the queued task the moment your current task completes.** Do NOT pause, do NOT ask for confirmation, do NOT summarize and wait. Transition seamlessly as if it were one continuous workflow.
+1. **現在のタスクを止めたり中断したりしない。** ユーザーは、新しいメッセージを送ると作業中のものを放棄するのではないかと心配しています。現在の作業を続けてください。
+2. **キューに入れられたタスクを簡潔に確認する**（一行で）、その後すぐに現在の作業を再開する。
+3. **現在のタスクが完了した瞬間に自動的にキューのタスクを開始する。** 一時停止しない、確認を求めない、まとめて待つことをしない。まるで一連の連続したワークフローであるかのようにシームレスに移行する。
 
-## Queued Task
+## キューに入れられたタスク
 
 $ARGUMENTS
 
-## Behavior
+## 動作
 
-- If you are currently working on something: acknowledge the queue, finish your current task, then **immediately and automatically** start the queued task without any pause or prompt.
-- If you have no current task: start the queued task immediately.
-- **NEVER stop between tasks.** Treat the queue like a pipeline — when one task ends, the next one begins in the same breath. Do not present a summary and wait. Do not ask "shall I proceed?" Just do it.
+- 現在何かに取り組んでいる場合：キューを確認し、現在のタスクを完了し、その後**即座に自動的に**キューのタスクを一時停止なしに開始する。
+- 現在タスクがない場合：キューのタスクをすぐに開始する。
+- **タスク間で絶対に止まらない。** キューをパイプラインのように扱う — 一つのタスクが終わったら、次のタスクが同じ流れで始まる。まとめを提示して待つことをしない。「進めますか？」と聞かない。そのまま実行する。

@@ -1,140 +1,140 @@
 ---
 name: claudemd-refactor
-description: "Refactor and optimize CLAUDE.md files in a repository. Analyzes the existing setup, explores repo structure, proposes splitting CLAUDE.md into a hierarchical directory-scoped structure. Use when: (1) User wants to optimize CLAUDE.md, (2) Root CLAUDE.md is too large, (3) User wants to split CLAUDE.md into directory-scoped files, (4) User mentions 'refactor CLAUDE.md', 'split CLAUDE.md', or 'organize CLAUDE.md'."
+description: "リポジトリ内のCLAUDE.mdファイルをリファクタリング・最適化する。既存の設定を分析し、リポジトリ構造を調査し、CLAUDE.mdをディレクトリスコープの階層構造に分割することを提案する。使用タイミング：(1) ユーザーがCLAUDE.mdを最適化したい場合、(2) ルートのCLAUDE.mdが大きすぎる場合、(3) ユーザーがCLAUDE.mdをディレクトリスコープのファイルに分割したい場合、(4) ユーザーが「CLAUDE.mdをリファクタ」「CLAUDE.mdを分割」「CLAUDE.mdを整理」と言った場合。"
 ---
 
-# Refactor CLAUDE.md
+# CLAUDE.mdのリファクタリング
 
-Analyze and refactor CLAUDE.md files in the current repository to optimize how context is delivered to Claude Code.
+現在のリポジトリのCLAUDE.mdファイルを分析・リファクタリングして、Claude Codeへのコンテキスト提供を最適化します。
 
-## Context Loading Reliability Hierarchy
+## コンテキスト読み込みの信頼性階層
 
-When deciding where to place information, follow this hierarchy (most to least reliable):
+情報の配置場所を決める際は、この階層に従う（信頼性が高い順）：
 
-| Approach | Reliability | Tradeoff |
-|---|---|---|
-| Inline in CLAUDE.md | Highest | Larger CLAUDE.md |
-| Directory-scoped CLAUDE.md | High | Content must be relevant to that directory |
-| Explicit "read before doing X" | Medium | Depends on Claude following the instruction |
-| Passive "refer to file" | Low | Claude may or may not read it |
+| アプローチ | 信頼性 | トレードオフ |
+| --- | --- | --- |
+| CLAUDE.md内にインライン | 最高 | CLAUDE.mdが大きくなる |
+| ディレクトリスコープのCLAUDE.md | 高 | そのディレクトリに関連する内容でなければならない |
+| 明示的な「Xをする前に読む」 | 中 | Claudeが指示に従うかどうかに依存 |
+| パッシブな「ファイルを参照」 | 低 | Claudeが読むかどうかは不確か |
 
-**Key principle**: Claude Code automatically loads CLAUDE.md files based on the working directory. Root CLAUDE.md is always loaded. Subdirectory CLAUDE.md files are loaded when working on files in that directory. Content in CLAUDE.md is always in context — no tool call needed.
+**重要な原則**：Claude Codeはワーキングディレクトリに基づいてCLAUDE.mdファイルを自動的に読み込む。ルートのCLAUDE.mdは常に読み込まれる。サブディレクトリのCLAUDE.mdはそのディレクトリのファイルを操作する際に読み込まれる。CLAUDE.md内のコンテンツは常にコンテキストに入っている — ツール呼び出し不要。
 
-## Workflow
+## ワークフロー
 
-### Phase 1: Explore and Analyze
+### フェーズ1：調査と分析
 
-1. **Find all existing CLAUDE.md files** in the repo
+1. **リポジトリ内の既存のCLAUDE.mdファイルをすべて見つける**
 
    ```
    Glob: **/CLAUDE.md
    ```
 
-2. **Read the root CLAUDE.md** — understand what's currently there, measure its size
+2. **ルートのCLAUDE.mdを読む** — 現在の内容を把握し、サイズを測定する
 
-3. **Explore the repo structure** — understand the directory layout, identify logical boundaries
-- What are the major directories? (src/, docs/, scripts/, tests/, etc.)
-- What languages/frameworks are used?
-- Are there distinct subsystems with their own conventions?
+3. **リポジトリ構造を調査する** — ディレクトリレイアウトを把握し、論理的な境界を特定する
+   - 主要なディレクトリは何か？（src/、docs/、scripts/、tests/ など）
+   - どの言語/フレームワークが使われているか？
+   - 独自の規約を持つ明確なサブシステムはあるか？
 
-4. **Categorize the content** in the existing root CLAUDE.md into buckets:
-- **Global**: Project-wide info that applies everywhere (project name, tech stack, overall architecture, global conventions)
-- **Directory-specific**: Rules that only apply to certain directories (e.g., "use camelCase in src/", "frontmatter required in docs/")
-- **Task-specific**: Instructions tied to specific operations (e.g., "before modifying API routes, read api-design.md")
-- **Redundant/outdated**: Content that can be removed
+4. **既存のルートCLAUDE.mdの内容をカテゴリ分類する**：
+   - **グローバル**：どこでも適用されるプロジェクト全体の情報（プロジェクト名、技術スタック、全体的なアーキテクチャ、グローバル規約）
+   - **ディレクトリ固有**：特定のディレクトリにのみ適用されるルール（例：「src/ではcamelCaseを使用」「docs/ではフロントマターが必要」）
+   - **タスク固有**：特定の操作に関連する指示（例：「APIルートを変更する前にapi-design.mdを読む」）
+   - **冗長/古い**：削除できるコンテンツ
 
-### Phase 2: Propose a Plan
+### フェーズ2：計画の提案
 
-Present the user with a concrete proposal. Include:
+具体的な提案をユーザーに提示する。以下を含める：
 
-1. **Current state summary**
-- Number of CLAUDE.md files found
-- Root CLAUDE.md size (lines/sections)
-- Content categories identified
+1. **現状のサマリー**
+   - 見つかったCLAUDE.mdファイルの数
+   - ルートのCLAUDE.mdのサイズ（行数/セクション数）
+   - 特定されたコンテンツカテゴリ
 
-2. **Proposed CLAUDE.md structure** — show a tree like:
+2. **提案するCLAUDE.md構造** — このようなツリーで表示：
 
    ```
    repo/
-   ├── CLAUDE.md              # Global: project overview, tech stack, universal conventions
+   ├── CLAUDE.md              # グローバル：プロジェクト概要、技術スタック、普遍的な規約
    ├── src/
-   │   └── CLAUDE.md          # Code: naming conventions, import rules, architecture patterns
+   │   └── CLAUDE.md          # コード：命名規約、インポートルール、アーキテクチャパターン
    ├── docs/
-   │   └── CLAUDE.md          # Docs: writing style, frontmatter, formatting rules
+   │   └── CLAUDE.md          # ドキュメント：文章スタイル、フロントマター、フォーマットルール
    └── tests/
-       └── CLAUDE.md          # Tests: testing conventions, fixture locations, coverage rules
+       └── CLAUDE.md          # テスト：テスト規約、フィクスチャの場所、カバレッジルール
    ```
 
-3. **For each proposed CLAUDE.md**, list:
-- What content moves there (with specific sections/lines from original)
-- What stays in root
-- Any new content needed (e.g., cross-references)
+3. **提案する各CLAUDE.mdについて**、以下を列挙：
+   - どのコンテンツがそこに移動するか（元のファイルの具体的なセクション/行）
+   - ルートに残るもの
+   - 必要な新しいコンテンツ（例：クロスリファレンス）
 
-4. **Migration of "refer to" patterns** — identify any passive references and propose upgrades:
-- Passive → Inline (if content is small and critical)
-- Passive → Explicit trigger ("Before modifying X, read Y")
-- Keep as passive (only if truly optional background info)
+4. **「参照」パターンの移行** — パッシブな参照を特定し、アップグレードを提案：
+   - パッシブ → インライン（コンテンツが小さく重要な場合）
+   - パッシブ → 明示的トリガー（「Xを変更する前にYを読む」）
+   - パッシブのまま（本当にオプションの補足情報のみ）
 
-### Phase 3: Ask for User Approval
+### フェーズ3：ユーザーの承認を求める
 
-**IMPORTANT**: Do NOT proceed without explicit user approval. Present the plan and ask:
+**重要**：明示的なユーザーの承認なしに進めない。計画を提示して以下を確認する：
 
-- Does the proposed structure make sense for this repo?
-- Should any content stay in root instead of being split?
-- Are there directories that should have their own CLAUDE.md that weren't identified?
-- Any content that should be removed entirely?
+- 提案された構造はこのリポジトリに適切か？
+- ルートに残すべきコンテンツはあるか？
+- 特定されなかったが独自のCLAUDE.mdを持つべきディレクトリはあるか？
+- 完全に削除すべきコンテンツはあるか？
 
-### Phase 4: Execute the Refactoring
+### フェーズ4：リファクタリングの実行
 
-After approval:
+承認後：
 
-1. **Create directory-scoped CLAUDE.md files** with the approved content
-2. **Trim the root CLAUDE.md** — remove content that was moved to subdirectories
-3. **Upgrade passive references** — replace "refer to X" with inline content or explicit triggers
-4. **Add cross-references where needed** — if root CLAUDE.md needs to mention that subdirectory rules exist
+1. **承認されたコンテンツでディレクトリスコープのCLAUDE.mdファイルを作成する**
+2. **ルートのCLAUDE.mdを整理する** — サブディレクトリに移動したコンテンツを削除する
+3. **パッシブな参照をアップグレードする** — 「Xを参照」をインラインコンテンツまたは明示的トリガーに置き換える
+4. **必要に応じてクロスリファレンスを追加する** — ルートのCLAUDE.mdがサブディレクトリルールの存在に言及する必要がある場合
 
-### Phase 5: Verify
+### フェーズ5：検証
 
-1. Read each created/modified CLAUDE.md to verify correctness
-2. Ensure no critical information was lost
-3. Check that the root CLAUDE.md is noticeably smaller but still contains all global info
-4. Present a summary of changes to the user
+1. 作成/変更された各CLAUDE.mdを読んで正確性を確認する
+2. 重要な情報が失われていないことを確認する
+3. ルートのCLAUDE.mdが目立って小さくなっているが、すべてのグローバル情報が含まれていることを確認する
+4. 変更のサマリーをユーザーに提示する
 
-## Content Placement Rules
+## コンテンツ配置ルール
 
-Use these rules to decide where content belongs:
+コンテンツの配置場所を決めるためのルール：
 
-### Root CLAUDE.md (always loaded)
+### ルートのCLAUDE.md（常に読み込まれる）
 
-- Project name and purpose
-- Tech stack overview
-- Universal coding conventions (applies to ALL code)
-- Git/commit conventions
-- CI/CD and deployment notes
-- Links to key documentation
-- Cross-references to subdirectory CLAUDE.md files
+- プロジェクト名と目的
+- 技術スタックの概要
+- 普遍的なコーディング規約（すべてのコードに適用）
+- Git/コミット規約
+- CI/CDとデプロイメントのメモ
+- 主要ドキュメントへのリンク
+- サブディレクトリのCLAUDE.mdファイルへのクロスリファレンス
 
-### Directory-scoped CLAUDE.md (loaded when working in that directory)
+### ディレクトリスコープのCLAUDE.md（そのディレクトリで作業する際に読み込まれる）
 
-- Language/framework-specific conventions for that directory
-- File naming and organization rules specific to that area
-- Import/export patterns
-- Testing patterns specific to that area
-- Build/compilation notes for that subsystem
+- そのディレクトリの言語/フレームワーク固有の規約
+- そのエリア固有のファイル命名と整理ルール
+- インポート/エクスポートパターン
+- そのエリア固有のテストパターン
+- そのサブシステムのビルド/コンパイルメモ
 
-### What NOT to put in CLAUDE.md
+### CLAUDE.mdに入れないもの
 
-- Content that changes frequently (use external docs with explicit read triggers)
-- Very long reference material (keep in separate .md files, use explicit read triggers)
-- Information that's obvious from the code itself
+- 頻繁に変更されるコンテンツ（明示的な読み取りトリガーを持つ外部ドキュメントを使用）
+- 非常に長いリファレンス素材（別の.mdファイルに保存し、明示的な読み取りトリガーを使用）
+- コード自体から明らかな情報
 
-## Anti-patterns to Fix
+## 修正すべきアンチパターン
 
-When analyzing existing CLAUDE.md, look for and fix these anti-patterns:
+既存のCLAUDE.mdを分析する際に、以下のアンチパターンを見つけて修正する：
 
-1. **"Refer to X for details"** → Inline the content or use explicit trigger
-2. **Duplicate information** across multiple sections → Consolidate
-3. **Outdated instructions** referencing files/dirs that don't exist → Remove
-4. **Overly verbose explanations** → Condense to actionable rules
-5. **Everything in root** when clear directory boundaries exist → Split
-6. **Directory-specific rules in root** → Move to appropriate directory CLAUDE.md
+1. **「詳細はXを参照」** → コンテンツをインライン化するか明示的トリガーを使用
+2. **複数セクションにわたる重複情報** → 統合する
+3. **存在しないファイル/ディレクトリを参照している古い指示** → 削除する
+4. **過度に冗長な説明** → 実行可能なルールに凝縮する
+5. **明確なディレクトリ境界があるのにすべてがルートにある** → 分割する
+6. **ルートにあるディレクトリ固有のルール** → 適切なディレクトリのCLAUDE.mdに移動する

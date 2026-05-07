@@ -1,82 +1,82 @@
 ---
 name: purge-private-info
-description: "Scan the repo for private/confidential information and remove, rename, or replace it. Use when: (1) User says 'purge private info', 'check for secrets', or 'scan for credentials', (2) Before making a repo public, (3) User wants to ensure no client names, passwords, or personal info are exposed."
+description: "リポジトリをプライベート/機密情報についてスキャンし、削除、リネーム、または置換する。使用タイミング：(1) ユーザーが「プライベート情報を削除」「シークレットを確認」「認証情報をスキャン」と言った場合、(2) リポジトリを公開する前、(3) ユーザーがクライアント名、パスワード、個人情報が露出していないことを確認したい場合。"
 ---
 
-# Purge Private Info
+# プライベート情報の削除
 
-The user is unsure whether unwanted private or confidential information exists in this repository. Your job is to thoroughly scan and identify any such information, then remove, rename, or replace it.
+このリポジトリに不要なプライベートまたは機密情報が存在するかどうかユーザーが不明な場合に使用します。徹底的にスキャンしてそのような情報を特定し、削除、リネーム、または置換することがあなたの仕事です。
 
-## Priority Levels
+## 優先度レベル
 
-### HIGH PRIORITY (most important — always fix)
+### 高優先度（最重要 — 必ず修正）
 
-1. **Client/corporate information** — Company names that appear to be real clients (e.g., Sony, Rakuten, Yahoo, any recognizable corporation or brand that seems like an actual work client, not a generic example)
+1. **クライアント/企業情報** — 実際のクライアントと思われる会社名（例：Sony、Rakuten、Yahoo、一般的な例ではなく実際の業務クライアントと思われる認識可能な企業やブランド）
 
-- In file contents (code, config, comments, docs)
-- In directory names and file names
-- In project names, package names, or identifiers
-- In URLs referencing client domains or systems
+   - ファイルの内容（コード、設定、コメント、ドキュメント）
+   - ディレクトリ名とファイル名
+   - プロジェクト名、パッケージ名、または識別子
+   - クライアントのドメインやシステムを参照するURL
 
-2. **Passwords and secrets**
+2. **パスワードとシークレット**
 
-- Hardcoded passwords, API keys, tokens, secrets
-- `.env` files with real credentials committed to the repo
-- Private keys, certificates
-- Database connection strings with credentials
+   - ハードコードされたパスワード、APIキー、トークン、シークレット
+   - リポジトリにコミットされた実際の認証情報を含む `.env` ファイル
+   - 秘密鍵、証明書
+   - 認証情報を含むデータベース接続文字列
 
-### MEDIUM PRIORITY (fix when found)
+### 中優先度（見つかったら修正）
 
-1. **Concrete personal SNS accounts** — Real Twitter/X handles, GitHub usernames (other than the repo owner), Instagram, Facebook profiles, etc. that identify specific individuals
-2. **Personal blog URLs** — URLs pointing to specific individuals' personal blogs or websites (other than the repo owner's)
+1. **具体的な個人SNSアカウント** — 特定の個人を識別する実際のTwitter/Xハンドル、GitHubユーザー名（リポジトリオーナー以外）、Instagram、Facebookプロフィールなど
+2. **個人ブログURL** — 特定の個人のパーソナルブログやウェブサイトへのURL（リポジトリオーナーのもの以外）
 
-## Scan Process
+## スキャンプロセス
 
-### Step 1: Broad Scan
+### ステップ1：広範なスキャン
 
-Use parallel searches to scan the repository efficiently:
+リポジトリを効率的にスキャンするために並行検索を使用する：
 
-1. **Search file/directory names** for client-like or corporate names
-- Look at directory structure for project names that might be client names
-2. **Search file contents** for:
-- Known corporate/brand names that look like client references (not generic library/tool names)
-- Patterns like `password`, `secret`, `api_key`, `token`, `credential`, `apiKey`, `API_KEY`, `SECRET`, `PRIVATE_KEY`
-- `.env` files or similar config with sensitive values
-- SNS URLs: `twitter.com/`, `x.com/`, `instagram.com/`, `facebook.com/`, `github.com/` (check if they reference specific personal accounts)
-- Personal blog-like URLs
-3. **Check git history** (recent commits) for accidentally committed secrets
+1. **ファイル/ディレクトリ名を検索**してクライアントのような、または企業名を探す
+   - クライアント名かもしれないプロジェクト名のディレクトリ構造を確認する
+2. **ファイルの内容を検索**して以下を確認する：
+   - クライアント参照のように見える既知の企業/ブランド名（汎用ライブラリ/ツール名ではない）
+   - `password`、`secret`、`api_key`、`token`、`credential`、`apiKey`、`API_KEY`、`SECRET`、`PRIVATE_KEY` などのパターン
+   - 機密値を含む `.env` ファイルや類似の設定
+   - SNS URL：`twitter.com/`、`x.com/`、`instagram.com/`、`facebook.com/`、`github.com/`（特定の個人アカウントを参照しているか確認）
+   - 個人ブログのようなURL
+3. **gitの履歴を確認する**（最近のコミット）誤ってコミットされたシークレットがないか
 
-### Step 2: Analyze Findings
+### ステップ2：調査結果の分析
 
-For each finding, classify it:
+各発見物を分類する：
 
-- **Clearly private** — Real client name, actual password, real SNS account → Fix immediately
-- **Probably private** — Looks like it could be a client name or personal info → Ask user
-- **False positive** — Library name, tool name, generic example → Skip
+- **明らかにプライベート** — 実際のクライアント名、実際のパスワード、実際のSNSアカウント → 即座に修正
+- **おそらくプライベート** — クライアント名または個人情報の可能性がある → ユーザーに確認
+- **偽陽性** — ライブラリ名、ツール名、汎用例 → スキップ
 
-### Step 3: Fix Issues
+### ステップ3：問題を修正する
 
-For confirmed private information:
+確認されたプライベート情報について：
 
-- **Client/project names in code** → Replace with generic placeholders (e.g., `acme-corp`, `example-project`, `client-project`)
-- **Client/project names in filenames/dirs** → Rename to generic names
-- **Passwords/secrets** → Remove the value, replace with placeholder like `YOUR_API_KEY_HERE` or `changeme`
-- **SNS accounts** → Replace with generic example (e.g., `@example_user`, `https://twitter.com/example`)
-- **Personal blog URLs** → Replace with `https://example.com/blog`
+- **コード内のクライアント/プロジェクト名** → 汎用プレースホルダーに置換（例：`acme-corp`、`example-project`、`client-project`）
+- **ファイル名/ディレクトリ内のクライアント/プロジェクト名** → 汎用名にリネーム
+- **パスワード/シークレット** → 値を削除し、`YOUR_API_KEY_HERE` や `changeme` などのプレースホルダーに置換
+- **SNSアカウント** → 汎用例に置換（例：`@example_user`、`https://twitter.com/example`）
+- **個人ブログURL** → `https://example.com/blog` に置換
 
-### Step 4: Report
+### ステップ4：報告
 
-After fixing, provide a summary:
+修正後に以下のサマリーを提供する：
 
-1. What was found and fixed
-2. What was flagged but skipped (with reason)
-3. Any items you're unsure about (ask the user)
+1. 見つかって修正されたもの
+2. フラグが立てられたがスキップされたもの（理由とともに）
+3. 不確かな項目（ユーザーに確認）
 
-## Important Notes
+## 重要な注意事項
 
-- **When unsure, always ask the user** before making changes
-- Do NOT flag common library/tool names as client info (e.g., "google" in `googleapis`, "amazon" in `aws-sdk` are fine)
-- Do NOT flag the repo owner's own information as private (their own GitHub, their own blog)
-- Be thorough — check all file types including markdown, config files, scripts, and comments
-- Consider git-ignored files too if they exist in the working tree
-- After making changes, verify the code still works if applicable
+- **不確かな場合は変更前に常にユーザーに確認する**
+- 一般的なライブラリ/ツール名をクライアント情報としてフラグを立てない（例：`googleapis` の「google」、`aws-sdk` の「amazon」は問題ない）
+- リポジトリオーナー自身の情報をプライベートとしてフラグを立てない（自分のGitHub、自分のブログ）
+- 徹底的に — markdown、設定ファイル、スクリプト、コメントを含むすべてのファイルタイプを確認する
+- ワーキングツリーに存在する場合はgit-ignoredファイルも検討する
+- 変更を行った後、該当する場合はコードが引き続き動作することを確認する

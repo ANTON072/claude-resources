@@ -1,54 +1,54 @@
 ---
 name: format-md
-description: "Format markdown (.md) and MDX (.mdx) files using @takazudo/mdx-formatter. Use when: (1) User wants to format markdown files, (2) User mentions 'format md', 'prettify markdown', or 'fix markdown formatting', (3) Markdown/MDX files need consistent formatting. Features: remark-based AST formatting, MDX (JSX, imports/exports), Japanese text, HTML→md conversion, Docusaurus admonitions, GFM (tables, strikethrough, task lists)."
+description: "@takazudo/mdx-formatterを使用してMarkdown（.md）とMDX（.mdx）ファイルをフォーマットする。使用タイミング：(1) ユーザーがmarkdownファイルをフォーマットしたい場合、(2) ユーザーが「mdをフォーマット」「markdownをきれいにする」「markdownフォーマットを修正」と言った場合、(3) Markdown/MDXファイルに一貫したフォーマットが必要な場合。機能：remarkベースのASTフォーマット、MDX（JSX、インポート/エクスポート）、日本語テキスト、HTML→md変換、Docusaurusのadmonitions、GFM（テーブル、取り消し線、タスクリスト）。"
 ---
 
-# Format Markdown/MDX Files
+# Markdown/MDXファイルのフォーマット
 
-Format the specified markdown or MDX file(s) using `@takazudo/mdx-formatter`.
+`@takazudo/mdx-formatter` を使用して指定されたMarkdownまたはMDXファイルをフォーマットします。
 
-## Usage
+## 使い方
 
-The user can specify:
+ユーザーは以下を指定できます：
 
-- A specific file path (e.g., `README.md`, `docs/guide.md`)
-- Multiple files (e.g., `docs/*.md`)
-- If no file is specified, ask the user which file(s) they want to format
+- 特定のファイルパス（例：`README.md`、`docs/guide.md`）
+- 複数のファイル（例：`docs/*.md`）
+- ファイルが指定されていない場合は、どのファイルをフォーマットするかユーザーに質問する
 
-## Formatter Details
+## フォーマッターの詳細
 
-- **npm package**: `@takazudo/mdx-formatter`
-- **Command**: `npx @takazudo/mdx-formatter --write <file-path>`
+- **npmパッケージ**：`@takazudo/mdx-formatter`
+- **コマンド**：`npx @takazudo/mdx-formatter --write <file-path>`
 
-## Instructions
+## 手順
 
-1. If the user provided a file path or pattern, use it directly
-2. If no file was specified, ask the user which file(s) they want to format
-3. Run the formatter using the Bash tool:
+1. ユーザーがファイルパスまたはパターンを指定した場合は、そのまま使用する
+2. ファイルが指定されていない場合は、どのファイルをフォーマットするかユーザーに質問する
+3. Bashツールを使用してフォーマッターを実行する：
 
    ```bash
    npx @takazudo/mdx-formatter --write <file-path>
    ```
 
-4. Report the results to the user
+4. 結果をユーザーに報告する
 
-## Examples
+## 例
 
 ```bash
-# Format a single file
+# 単一ファイルのフォーマット
 npx @takazudo/mdx-formatter --write README.md
 
-# Format multiple files with glob pattern
+# globパターンで複数ファイルをフォーマット
 npx @takazudo/mdx-formatter --write "docs/**/*.md"
 ```
 
-## Features
+## 機能
 
-The formatter provides:
+フォーマッターが提供する機能：
 
-- AST-based formatting with remark
-- MDX support (JSX components, imports/exports)
-- Japanese text handling
-- HTML to markdown conversion
-- Docusaurus admonitions preservation
-- GFM features (tables, strikethrough, task lists)
+- remarkによるASTベースのフォーマット
+- MDXサポート（JSXコンポーネント、インポート/エクスポート）
+- 日本語テキストの処理
+- HTMLからMarkdownへの変換
+- Docusaurusのadmonitionsの保持
+- GFM機能（テーブル、取り消し線、タスクリスト）

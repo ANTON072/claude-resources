@@ -1,6 +1,6 @@
 ---
 name: gh-issue-with-imgs
-description: "Create GitHub issues with embedded images via CLI. Uploads images as GitHub release assets and embeds them in the issue body. Use when: (1) Creating an issue that needs screenshots, (2) Programmatically attaching images without browser UI, (3) User says 'issue with images', 'gh issue with imgs', or 'create issue with screenshots'."
+description: "CLIを使って画像付きのGitHub Issueを作成する。画像をGitHubリリースアセットとしてアップロードし、Issue本文に埋め込む。使用タイミング：(1) スクリーンショットが必要なIssueを作成する場合、(2) ブラウザUIなしでプログラム的に画像を添付する場合、(3) ユーザーが「画像付きIssue」「gh issue with imgs」「スクリーンショット付きIssueを作成」と言った場合。"
 user-invocable: true
 argument-hint: <owner/repo> <title> --body <body> --img <path> [--img <path>...]
 allowed-tools:
@@ -9,66 +9,67 @@ allowed-tools:
   - Glob
 ---
 
-# GitHub Issue with Images
+# 画像付きGitHub Issue
 
-Create GitHub issues with embedded images using release assets as image hosting.
+リリースアセットを画像ホスティングとして使用して、画像付きのGitHub Issueを作成します。
 
-GitHub CLI does not support attaching images to issues natively. This skill works around that by uploading images to a dedicated release, then embedding the asset URLs in the issue body markdown.
+GitHub CLIはIssueへの画像添付をネイティブにサポートしていません。このスキルは、専用のリリースに画像をアップロードし、そのアセットURLをIssue本文のMarkdownに埋め込むことで回避します。
 
-## Usage
+## 使い方
 
-Arguments: `<owner/repo> <title> --body <body> --img <path> [--img <path>...]`
+引数：`<owner/repo> <title> --body <body> --img <path> [--img <path>...]`
 
-Multiple `--img` flags supported. If no `--body`, use empty string.
+複数の `--img` フラグをサポート。`--body` がない場合は空の文字列を使用。
 
-## Process
+## プロセス
 
-### Step 1: Parse Arguments
+### ステップ1：引数を解析する
 
-Extract from the skill arguments:
+スキルの引数から以下を抽出する：
 
-- `owner/repo` (required) - the target repository
-- Title (required) - the issue title
-- `--body` (optional) - issue body text
-- `--img` (one or more) - paths to image files
+- `owner/repo`（必須）— ターゲットリポジトリ
+- タイトル（必須）— Issueのタイトル
+- `--body`（オプション）— Issue本文のテキスト
+- `--img`（1つ以上）— 画像ファイルへのパス
 
-### Step 2: Ensure Attachments Release Exists
+### ステップ2：Attachmentsリリースの存在を確認する
 
-Check for a non-draft release tagged `_attachments` in the repo. Create if missing.
+リポジトリに `_attachments` タグ付きの非ドラフトリリースがあるか確認する。なければ作成する。
 
-If an old **draft** `_attachments` release exists (from before this fix), delete it first — draft releases don't have tags, so assets uploaded to them return 404 for unauthenticated access.
+古い**ドラフト**の `_attachments` リリースが存在する場合（このfix以前のもの）、先に削除する — ドラフトリリースにはタグがないため、アップロードされたアセットは認証なしのアクセスで404を返す。
 
 ```bash
-# Check if a tagged (non-draft) release exists
+# タグ付き（非ドラフト）リリースが存在するか確認
 gh release view _attachments --repo <owner/repo> 2>/dev/null
 
-# If it doesn't exist, check for and clean up any old draft release named "_attachments"
-# (Draft releases have no tag, so we search by title via the API)
+# 存在しない場合、"_attachments"という名前の古いドラフトリリースを確認してクリーンアップ
+# （ドラフトリリースにはタグがないため、APIでタイトルで検索）
 OLD_DRAFT_ID=$(gh api repos/<owner/repo>/releases --jq '.[] | select(.draft == true and .name == "_attachments") | .id' 2>/dev/null)
 if [ -n "$OLD_DRAFT_ID" ]; then
   gh api -X DELETE repos/<owner/repo>/releases/$OLD_DRAFT_ID
 fi
 
-# Create the non-draft release (NOT --draft — draft assets require auth and return 404 for anonymous access)
-gh release create _attachments --title "_attachments" --notes "Image attachments for issues. Do not delete." --repo <owner/repo>
+# 非ドラフトリリースを作成（--draft は使わない — ドラフトリリースのアセットは
+# 認証なしのリクエストで404を返す。ブラウザでログイン済みの場合は動作するように見えるが）
+gh release create _attachments --title "_attachments" --notes "Issueの画像添付ファイル。削除しないでください。" --repo <owner/repo>
 ```
 
-### Step 3: Upload Images
+### ステップ3：画像をアップロードする
 
-For each `--img` path, generate a unique filename to avoid collisions, then upload.
+各 `--img` パスについて、コリジョンを避けるためのユニークなファイル名を生成し、アップロードする。
 
 ```bash
-# Generate unique name: timestamp + original filename
+# ユニーク名を生成：タイムスタンプ + 元のファイル名
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 UNIQUE_NAME="${TIMESTAMP}-$(basename <path>)"
 
-# Upload
+# アップロード
 gh release upload _attachments "<path>#${UNIQUE_NAME}" --repo <owner/repo> --clobber
 ```
 
-**Important**: The `#name` syntax renames the asset on upload. Use `--clobber` to overwrite if name collision occurs.
+**重要**：`#name` 構文はアップロード時にアセットをリネームする。名前のコリジョンが発生した場合は `--clobber` で上書き。
 
-If `gh release upload` does not support the `#name` rename syntax, copy the file to a temp location with the unique name instead:
+`gh release upload` が `#name` リネーム構文をサポートしていない場合は、代わりにファイルをユニーク名で一時的な場所にコピーする：
 
 ```bash
 TMPFILE="/tmp/${UNIQUE_NAME}"
@@ -77,46 +78,46 @@ gh release upload _attachments "$TMPFILE" --repo <owner/repo> --clobber
 rm "$TMPFILE"
 ```
 
-### Step 4: Get Asset URLs
+### ステップ4：アセットURLを取得する
 
-Fetch the download URLs for uploaded assets.
+アップロードされたアセットのダウンロードURLを取得する。
 
 ```bash
 gh api repos/<owner/repo>/releases/tags/_attachments \
   --jq '.assets[] | select(.name == "<UNIQUE_NAME>") | .browser_download_url'
 ```
 
-### Step 5: Build Issue Body
+### ステップ5：Issue本文を構築する
 
-Append image markdown to the body:
+本文に画像のMarkdownを追加する：
 
 ```markdown
-<original body text>
+<元の本文テキスト>
 
 ![<filename>](<asset_url>)
 ```
 
-For multiple images, add each on its own line.
+複数の画像の場合は、それぞれ別の行に追加する。
 
-### Step 6: Create the Issue
+### ステップ6：Issueを作成する
 
 ```bash
 gh issue create \
   --repo <owner/repo> \
   --title "<title>" \
   --body "$(cat <<'EOF'
-<constructed body with embedded images>
+<画像を埋め込んで構築した本文>
 EOF
 )"
 ```
 
-Print the created issue URL.
+作成されたIssueのURLを表示する。
 
-## Notes
+## メモ
 
-- The `_attachments` release is a real (non-draft) release so asset URLs are publicly accessible without authentication
-- Never use `--draft` — draft release assets return 404 for unauthenticated requests (e.g., Claude API vision, curl), even though they appear to work in browsers where the user is logged in
-- Asset URLs are permanent as long as the release exists
-- Works for both public and private repos (private repo assets require authentication to view)
-- Image size limit: same as GitHub release assets (2 GB per file)
-- Supported formats: any image format (png, jpg, gif, svg, webp, etc.)
+- `_attachments` リリースは実際の（非ドラフト）リリースなので、アセットURLは認証なしでアクセス可能
+- `--draft` は絶対に使わない — ドラフトリリースのアセットは認証なしのリクエストで404を返す（ユーザーがログイン済みのブラウザでは動作するように見えても）
+- アセットURLはリリースが存在する限り永続的
+- パブリックとプライベートリポジトリの両方で動作する（プライベートリポジトリのアセットはアクセスに認証が必要）
+- 画像サイズ制限：GitHubリリースアセットと同じ（ファイルあたり2GB）
+- サポートフォーマット：あらゆる画像フォーマット（png、jpg、gif、svg、webp など）

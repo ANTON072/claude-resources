@@ -1,136 +1,136 @@
 ---
 name: subagent-manage
-description: "Create new or fix/improve existing Claude Code custom agents (subagents). Use when: (1) User wants to create a new custom agent, (2) User says 'create agent', 'new agent', 'make subagent', (3) User wants a specialized agent for delegation, (4) User reports an agent isn't working well, (5) User says 'fix agent', 'update agent', 'tweak agent', 'agent not working'. Covers agent file format, YAML frontmatter, tool restrictions, model selection, trigger debugging."
+description: "新しいClaude Codeカスタムエージェント（サブエージェント）を作成したり、既存のものを修正/改善したりする。使用タイミング：(1) ユーザーが新しいカスタムエージェントを作りたい場合、(2) ユーザーが「エージェントを作成」「新しいエージェント」「サブエージェントを作る」と言った場合、(3) ユーザーが委譲のための専門エージェントを必要とする場合、(4) ユーザーがエージェントがうまく機能していないと報告した場合、(5) ユーザーが「エージェントを修正」「エージェントを更新」「エージェントを調整」「エージェントが機能しない」と言った場合。エージェントファイルフォーマット、YAMLフロントマター、ツール制限、モデル選択、トリガーデバッグをカバーする。"
 ---
 
-# Subagent Manage
+# サブエージェント管理
 
-Determine the mode from context:
+コンテキストからモードを判断する：
 
-- **Create**: user wants a new agent
-- **Tweak**: user wants to fix or improve an existing agent
+- **作成**：ユーザーが新しいエージェントを必要としている場合
+- **調整**：ユーザーが既存のエージェントを修正または改善したい場合
 
 ---
 
-## Mode: Create
+## モード：作成
 
-### Step 1: Understand the agent's purpose
+### ステップ1：エージェントの目的を理解する
 
-Ask if not clear from context:
+コンテキストから明確でない場合は確認する：
 
-- What tasks should this agent handle?
-- Personal (`$HOME/.claude/agents/`) or project-scoped (`.claude/agents/`)?
-- Read-only or does it need write access?
+- このエージェントはどんなタスクを処理すべきか？
+- 個人用（`$HOME/.claude/agents/`）またはプロジェクトスコープ（`.claude/agents/`）？
+- 読み取り専用か、書き込みアクセスが必要か？
 
-### Step 2: Choose settings
+### ステップ2：設定を選択する
 
-**Model:**
+**モデル：**
 
-- `opus` — complex reasoning, code review, architecture
-- `sonnet` — general development, balanced
-- `haiku` — fast simple tasks, formatting, lookups
+- `opus` — 複雑な推論、コードレビュー、アーキテクチャ
+- `sonnet` — 一般的な開発、バランス型
+- `haiku` — 高速なシンプルタスク、フォーマット、ルックアップ
 
-**Tool restrictions:**
+**ツール制限：**
 
-- Read-only: `tools: Read, Grep, Glob`
-- No web: `disallowedTools: WebFetch, WebSearch`
-- Full access: omit `tools` (inherits all)
+- 読み取り専用：`tools: Read, Grep, Glob`
+- Webなし：`disallowedTools: WebFetch, WebSearch`
+- フルアクセス：`tools` を省略（すべてを継承）
 
-**Key constraints:**
+**主要な制約：**
 
-- Subagents CANNOT spawn other subagents
-- Keep body focused — it becomes the agent's system prompt
-- Use `$HOME/` not `~/` in all file paths
+- サブエージェントは他のサブエージェントを生成**できない**
+- 本文を集中させる — エージェントのシステムプロンプトになる
+- すべてのファイルパスに `~/` ではなく `$HOME/` を使用する
 
-### Step 3: Create the agent file
+### ステップ3：エージェントファイルを作成する
 
 ```markdown
 ---
 name: agent-name
-description: One sentence describing when Claude should delegate to this agent
+description: Claudeがいつこのエージェントに委譲すべきかを説明する一文
 model: sonnet
 tools: Read, Grep, Glob, Bash
 ---
 
-You are a specialized [role]. [Core instruction in 1-2 sentences.]
+あなたは専門的な[役割]です。[1〜2文でのコア指示。]
 
-## Responsibilities
+## 責務
 
-[What this agent does — keep concise]
+[このエージェントが何をするか — 簡潔に]
 
-## Workflow
+## ワークフロー
 
-[Step-by-step procedure if applicable]
+[該当する場合のステップバイステップの手順]
 ```
 
-### Step 4: Format
+### ステップ4：フォーマット
 
 ```bash
 pnpm dlx @takazudo/mdx-formatter --write <path-to-agent-file.md>
 ```
 
-### Step 5: Verify
+### ステップ5：検証
 
-1. File at the correct location
-2. YAML frontmatter parses correctly
-3. Description clearly indicates when to use the agent
+1. ファイルが正しい場所にある
+2. YAMLフロントマターが正しく解析される
+3. descriptionがエージェントをいつ使うかを明確に示している
 
 ---
 
-## Mode: Tweak
+## モード：調整
 
-### Step 1: Find and read the agent
+### ステップ1：エージェントを見つけて読む
 
-Locations:
+場所：
 
-- `$HOME/.claude/agents/*.md` (personal)
-- `.claude/agents/*.md` (project)
+- `$HOME/.claude/agents/*.md`（個人）
+- `.claude/agents/*.md`（プロジェクト）
 
-### Step 2: Diagnose
+### ステップ2：診断する
 
-| Problem | Likely Cause | Fix |
-| --- | --- | --- |
-| Agent not being used | Poor `description` | Rewrite with clear trigger keywords |
-| Agent too slow | Wrong model | Switch to `sonnet` or `haiku` |
-| Agent can't edit files | `tools` missing Write/Edit | Add needed tools |
-| Agent doing too much | No tool restrictions | Add `tools:` or `disallowedTools:` |
-| Agent forgets context | No persistent memory | Add `memory: user` or `memory: project` |
-| Agent runs too long | No turn limit | Add `maxTurns: N` |
+| 問題 | 考えられる原因 | 修正 |
+| ---- | ------------ | ---- |
+| エージェントが使われない | `description` が不明確 | トリガーキーワードを明確にして書き直す |
+| エージェントが遅すぎる | 間違ったモデル | `sonnet` または `haiku` に切り替える |
+| エージェントがファイルを編集できない | `tools` にWrite/Editがない | 必要なツールを追加する |
+| エージェントが過剰にやる | ツール制限なし | `tools:` または `disallowedTools:` を追加する |
+| エージェントがコンテキストを忘れる | 永続メモリがない | `memory: user` または `memory: project` を追加する |
+| エージェントが長時間実行する | ターン制限なし | `maxTurns: N` を追加する |
 
-### Step 3: Apply changes
+### ステップ3：変更を適用する
 
-Edit the agent's Markdown file. `description` is the most impactful field.
+エージェントのMarkdownファイルを編集する。`description` は最も影響力のあるフィールド。
 
-**Frontmatter fields:**
+**フロントマターフィールド：**
 
-| Field | Description |
-| --- | --- |
-| `name` | Identifier (lowercase, hyphens) |
-| `description` | When to use (primary delegation trigger) |
-| `model` | `opus`, `sonnet`, `haiku`, `inherit` |
-| `tools` | Tool allowlist |
-| `disallowedTools` | Tool denylist |
-| `permissionMode` | `default`, `acceptEdits`, `delegate`, `dontAsk`, `bypassPermissions`, `plan` |
-| `maxTurns` | Max agentic turns |
-| `skills` | Preloaded skills |
-| `memory` | `user`, `project`, `local` |
+| フィールド | 説明 |
+| --------- | ---- |
+| `name` | 識別子（小文字、ハイフン） |
+| `description` | 使用タイミング（主な委譲トリガー） |
+| `model` | `opus`、`sonnet`、`haiku`、`inherit` |
+| `tools` | ツールの許可リスト |
+| `disallowedTools` | ツールの拒否リスト |
+| `permissionMode` | `default`、`acceptEdits`、`delegate`、`dontAsk`、`bypassPermissions`、`plan` |
+| `maxTurns` | エージェントの最大ターン数 |
+| `skills` | プリロードするスキル |
+| `memory` | `user`、`project`、`local` |
 
-### Step 4: Format
+### ステップ4：フォーマット
 
 ```bash
 pnpm dlx @takazudo/mdx-formatter --write <path-to-agent-file.md>
 ```
 
-### Step 5: Verify
+### ステップ5：検証
 
-1. YAML frontmatter has no syntax errors
-2. Tool restrictions match intended behavior
-3. Description contains keywords users would naturally say
+1. YAMLフロントマターに構文エラーがない
+2. ツール制限が意図した動作と一致している
+3. descriptionにユーザーが自然に言うキーワードが含まれている
 
 ---
 
-## Tips
+## ヒント
 
-- Prefer `disallowedTools` over `tools` if only blocking a few tools
-- Subagents cannot nest — don't add `Task` to agents that will be spawned as subagents
-- `description` is the primary trigger mechanism — most impactful field to improve
+- 数個のツールをブロックするだけなら `tools` より `disallowedTools` を優先する
+- サブエージェントはネストできない — サブエージェントとして生成されるエージェントに `Task` を追加しない
+- `description` は主なトリガーメカニズム — 改善する最も影響力のあるフィールド

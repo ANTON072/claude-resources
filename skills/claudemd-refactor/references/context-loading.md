@@ -1,52 +1,52 @@
-# How Claude Code Loads CLAUDE.md Context
+# Claude CodeのCLAUDE.mdコンテキスト読み込み方法
 
-## Automatic Loading Behavior
+## 自動読み込みの動作
 
-Claude Code loads CLAUDE.md files automatically based on the working directory:
+Claude Codeはワーキングディレクトリに基づいてCLAUDE.mdファイルを自動的に読み込む：
 
-1. **Root CLAUDE.md** (`/CLAUDE.md` or `/.claude/CLAUDE.md`) — ALWAYS loaded at conversation start
-2. **Subdirectory CLAUDE.md** — loaded when Claude works on files in or below that directory
-3. **Multiple levels** — if working on `src/components/Button.tsx`, Claude loads:
-  - `/CLAUDE.md`
-  - `/src/CLAUDE.md` (if exists)
-  - `/src/components/CLAUDE.md` (if exists)
+1. **ルートのCLAUDE.md**（`/CLAUDE.md` または `/.claude/CLAUDE.md`）— 会話開始時に常に読み込まれる
+2. **サブディレクトリのCLAUDE.md** — Claudeがそのディレクトリ以下のファイルを操作する際に読み込まれる
+3. **複数レベル** — `src/components/Button.tsx` で作業する場合、Claudeは以下を読み込む：
+   - `/CLAUDE.md`
+   - `/src/CLAUDE.md`（存在する場合）
+   - `/src/components/CLAUDE.md`（存在する場合）
 
-## What "Loaded" Means
+## 「読み込まれる」の意味
 
-- Content is injected into Claude's context window automatically
-- No tool call (Read) is needed — the content is just there
-- This is why inline content in CLAUDE.md is the most reliable approach
+- コンテンツはClaudeのコンテキストウィンドウに自動的に注入される
+- ツール呼び出し（Read）は不要 — コンテンツはすでにそこにある
+- これが、CLAUDE.mdへのインラインコンテンツが最も信頼性の高いアプローチである理由
 
-## Context Window Considerations
+## コンテキストウィンドウの考慮事項
 
-- Every CLAUDE.md adds to the context window usage
-- Very large CLAUDE.md files reduce available context for actual work
-- Balance: enough info to be useful, not so much it crowds out working context
-- Rule of thumb: root CLAUDE.md should be under ~200 lines for most projects
-- Directory-scoped files should be under ~100 lines each
+- すべてのCLAUDE.mdがコンテキストウィンドウの使用量に追加される
+- 非常に大きなCLAUDE.mdファイルは実際の作業に使えるコンテキストを減らす
+- バランス：有用であるのに十分な情報、作業コンテキストを圧迫しない程度
+- 経験則：ほとんどのプロジェクトでルートのCLAUDE.mdは〜200行以下
+- ディレクトリスコープのファイルはそれぞれ〜100行以下
 
-## Reliability Explanation
+## 信頼性の説明
 
-### Highest: Inline in CLAUDE.md
+### 最高：CLAUDE.md内にインライン
 
-- Automatically loaded, always in context
-- Claude sees it before doing any work
-- Zero chance of missing it
+- 自動的に読み込まれ、常にコンテキストに入っている
+- Claudeは作業を始める前にそれを見る
+- 見逃す可能性がゼロ
 
-### High: Directory-scoped CLAUDE.md
+### 高：ディレクトリスコープのCLAUDE.md
 
-- Automatically loaded when working in that directory
-- Only risk: if Claude works on a file from outside its directory context
-- Very reliable for directory-specific rules
+- そのディレクトリで作業する際に自動的に読み込まれる
+- 唯一のリスク：Claudeがディレクトリコンテキストの外からファイルを操作する場合
+- ディレクトリ固有のルールには非常に信頼性が高い
 
-### Medium: Explicit "read before doing X"
+### 中：明示的な「Xをする前に読む」
 
-- Requires Claude to follow the instruction and use Read tool
-- Claude usually follows explicit instructions but may occasionally skip
-- Better for large reference docs that would bloat CLAUDE.md
+- ClaudeがReadツールを使って指示に従う必要がある
+- Claudeは通常明示的な指示に従うが、時々スキップすることがある
+- CLAUDE.mdを肥大化させる大きなリファレンスドキュメントに適している
 
-### Low: Passive "refer to file"
+### 低：パッシブな「ファイルを参照」
 
-- Claude may or may not read the file
-- Depends on whether Claude thinks it's relevant to the current task
-- Only use for truly optional supplementary info
+- Claudeがファイルを読むかどうかは不確か
+- Claudeが現在のタスクに関連があると判断するかどうかに依存する
+- 本当にオプションの補足情報のみに使用

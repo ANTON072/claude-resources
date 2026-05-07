@@ -1,66 +1,66 @@
 ---
 name: mermaid-creator
-description: Use proactively whenever generating Mermaid diagram code in any context (markdown blocks, .md files, docs). Covers flowcharts, sequence, class, state, ER, gantt, pie, mindmaps, timelines, and all Mermaid types. Applies strict syntax rules to prevent rendering errors (HTML tags, style directives, invalid escapes). No explicit request needed — load automatically when Mermaid syntax is being produced.
+description: あらゆるコンテキストでMermaid図のコードを生成する際（markdownブロック、.mdファイル、ドキュメント）は積極的に使用する。フローチャート、シーケンス、クラス、ステート、ER、ガント、パイ、マインドマップ、タイムライン、すべてのMermaidタイプをカバーする。レンダリングエラーを防ぐための厳格な構文ルールを適用する（HTMLタグ、スタイルディレクティブ、無効なエスケープ）。明示的なリクエストは不要 — Mermaid構文を生成する際は自動的に読み込む。
 ---
 
-# Mermaid Creator
+# Mermaidクリエーター
 
-Generate valid, error-free Mermaid diagrams following strict syntax rules and best practices.
+厳格な構文ルールとベストプラクティスに従った、有効でエラーのないMermaid図を生成します。
 
-## Core Principles
+## コア原則
 
-1. **NO HTML tags** - Never use `<br/>`, `<br>`, or any HTML in any part of the diagram
-2. **NO style directives** - Never use `style`, `fill`, `stroke`, `classDef`, or color specifications
-3. **Simple labels** - Keep text concise, avoid special characters or escape them properly
-4. **Validate syntax** - Always check against common error patterns before finalizing
+1. **HTMLタグ禁止** — 図のどの部分にも `<br/>`、`<br>`、その他のHTMLを使用しない
+2. **スタイルディレクティブ禁止** — `style`、`fill`、`stroke`、`classDef`、色指定を使用しない
+3. **シンプルなラベル** — テキストを簡潔に保ち、特殊文字は避けるか適切にエスケープする
+4. **構文の検証** — 最終化前に一般的なエラーパターンを常に確認する
 
-## Quick Start
+## クイックスタート
 
-When generating any Mermaid diagram:
+Mermaid図を生成する際：
 
-1. Identify the diagram type (sequence, flowchart, class, state, ER)
-2. Use only the patterns from [syntax-guide.md](references/syntax-guide.md)
-3. Avoid all forbidden patterns listed below
-4. Keep labels short and simple
+1. 図のタイプを特定する（シーケンス、フローチャート、クラス、ステート、ER）
+2. [syntax-guide.md](references/syntax-guide.md) のパターンのみを使用する
+3. 以下の禁止パターンをすべて避ける
+4. ラベルを短くシンプルに保つ
 
-## Forbidden Patterns
+## 禁止パターン
 
-These ALWAYS cause errors - never use:
-
-```mermaid
-❌ participant User<br/>Browser          (HTML tags)
-❌ A[Label<br/>with breaks]              (HTML in labels)
-❌ style A fill:#ff0000                  (Style directives)
-❌ classDef myClass fill:#f9f            (Color definitions)
-❌ A --> B: Very long message<br/>text   (Line breaks in text)
-```
-
-## Safe Patterns
-
-Use these instead:
+これらは常にエラーを引き起こす — 絶対に使わない：
 
 ```mermaid
-✅ participant UserBrowser as User Browser    (Aliases)
-✅ A[Short label]                             (Concise text)
-✅ A --> B: Concise message                   (Single-line text)
-✅ Note over A,B: Descriptive note            (Notes for details)
+❌ participant User<br/>Browser          (HTMLタグ)
+❌ A[Label<br/>with breaks]              (ラベル内のHTML)
+❌ style A fill:#ff0000                  (スタイルディレクティブ)
+❌ classDef myClass fill:#f9f            (色の定義)
+❌ A --> B: Very long message<br/>text   (テキスト内の改行)
 ```
 
-## Diagram Type Selection
+## 安全なパターン
 
-Choose based on use case:
+代わりにこれらを使用する：
 
-- **Sequence diagrams**: Authentication flows, API calls, time-based interactions
-- **Flowcharts**: Decision logic, processes, algorithms, step-by-step workflows
-- **Class diagrams**: Object-oriented design, data structures, type hierarchies
-- **State diagrams**: State machines, status lifecycles, transition logic
-- **ER diagrams**: Database schemas, entity relationships, data models
+```mermaid
+✅ participant UserBrowser as User Browser    (エイリアス)
+✅ A[短いラベル]                               (簡潔なテキスト)
+✅ A --> B: 簡潔なメッセージ                   (一行テキスト)
+✅ Note over A,B: 説明的なメモ                 (詳細のためのメモ)
+```
 
-## Generating Diagrams
+## 図タイプの選択
 
-### Sequence Diagrams
+ユースケースに基づいて選択する：
 
-Use for showing interactions over time (auth flows, API calls):
+- **シーケンス図**：認証フロー、API呼び出し、時系列のインタラクション
+- **フローチャート**：判断ロジック、プロセス、アルゴリズム、ステップバイステップのワークフロー
+- **クラス図**：オブジェクト指向設計、データ構造、型階層
+- **ステート図**：ステートマシン、ステータスライフサイクル、トランジションロジック
+- **ER図**：データベーススキーマ、エンティティの関係、データモデル
+
+## 図の生成
+
+### シーケンス図
+
+時間経過に伴うインタラクションの表示に使用（認証フロー、API呼び出し）：
 
 ```mermaid
 sequenceDiagram
@@ -68,48 +68,48 @@ sequenceDiagram
     participant Auth0
     participant Backend
 
-    Client->>Auth0: Login request
-    Auth0-->>Client: Authorization code
+    Client->>Auth0: ログインリクエスト
+    Auth0-->>Client: 認証コード
     Client->>Backend: POST /create-session
     Backend-->>Client: Set-Cookie (session)
 ```
 
-**Key rules:**
+**主要ルール：**
 
-- Use `participant X as Long Name` for readable labels
-- Arrow types: `->`, `-->`, `->>`, `-->>` (solid/dotted, with/without arrow)
-- Keep messages concise (no line breaks)
-- Use `Note over X,Y: Text` for additional context
+- 読みやすいラベルには `participant X as Long Name` を使用する
+- 矢印タイプ：`->`、`-->`、`->>`、`-->>` （実線/点線、矢印あり/なし）
+- メッセージを簡潔に保つ（改行なし）
+- 追加のコンテキストには `Note over X,Y: テキスト` を使用する
 
-See [syntax-guide.md](references/syntax-guide.md) for complete sequence diagram syntax.
+完全なシーケンス図の構文については [syntax-guide.md](references/syntax-guide.md) を参照。
 
-### Flowcharts
+### フローチャート
 
-Use for decision trees and processes:
+判断ツリーとプロセスに使用：
 
 ```mermaid
 flowchart TD
-    A[Start]
-    B{Authenticated?}
-    C[Call API]
-    D[Redirect to login]
+    A[開始]
+    B{認証済み？}
+    C[APIを呼び出す]
+    D[ログインにリダイレクト]
 
     A --> B
     B -->|Yes| C
     B -->|No| D
 ```
 
-**Key rules:**
+**主要ルール：**
 
-- Direction: `TD` (top-down), `LR` (left-right), `BT` (bottom-top), `RL` (right-left)
-- Shapes: `[]` rectangle, `()` rounded, `{}` diamond, `[[]]` subroutine
-- Use quotes for labels with special chars: `A["Label: special"]`
+- 方向：`TD`（上から下）、`LR`（左から右）、`BT`（下から上）、`RL`（右から左）
+- 形状：`[]` 矩形、`()` 角丸、`{}` ダイアモンド、`[[]]` サブルーチン
+- 特殊文字を含むラベルにはクォートを使用：`A["ラベル：特殊"]`
 
-See [syntax-guide.md](references/syntax-guide.md) for complete flowchart syntax.
+完全なフローチャートの構文については [syntax-guide.md](references/syntax-guide.md) を参照。
 
-### Class Diagrams
+### クラス図
 
-Use for object-oriented design:
+オブジェクト指向設計に使用：
 
 ```mermaid
 classDiagram
@@ -129,17 +129,17 @@ classDiagram
     User --> Session
 ```
 
-**Key rules:**
+**主要ルール：**
 
-- Visibility: `+` public, `-` private, `#` protected
-- Relationships: `<|--` inheritance, `*--` composition, `-->` association
-- Keep type annotations simple
+- 可視性：`+` パブリック、`-` プライベート、`#` プロテクテッド
+- 関係：`<|--` 継承、`*--` コンポジション、`-->` 関連
+- 型注釈をシンプルに保つ
 
-See [syntax-guide.md](references/syntax-guide.md) for complete class diagram syntax.
+完全なクラス図の構文については [syntax-guide.md](references/syntax-guide.md) を参照。
 
-### State Diagrams
+### ステート図
 
-Use for state machines and lifecycles:
+ステートマシンとライフサイクルに使用：
 
 ```mermaid
 stateDiagram-v2
@@ -151,17 +151,17 @@ stateDiagram-v2
     Failed --> [*]
 ```
 
-**Key rules:**
+**主要ルール：**
 
-- Use `stateDiagram-v2` (v2 is current version)
-- `[*]` represents start/end states
-- Avoid special characters in state names
+- `stateDiagram-v2` を使用する（v2が現在のバージョン）
+- `[*]` は開始/終了状態を表す
+- ステート名に特殊文字を使用しない
 
-See [syntax-guide.md](references/syntax-guide.md) for complete state diagram syntax.
+完全なステート図の構文については [syntax-guide.md](references/syntax-guide.md) を参照。
 
-### ER Diagrams
+### ER図
 
-Use for database schemas:
+データベーススキーマに使用：
 
 ```mermaid
 erDiagram
@@ -179,43 +179,43 @@ erDiagram
     }
 ```
 
-**Key rules:**
+**主要ルール：**
 
-- Cardinality: `||--||` one-to-one, `||--o{` one-to-many, `}o--o{` many-to-many
-- Use hyphens in multi-word entity names: `USER-ACCOUNT`
-- Keep attribute types simple
+- カーディナリティ：`||--||` 一対一、`||--o{` 一対多、`}o--o{` 多対多
+- 複数単語のエンティティ名にはハイフンを使用：`USER-ACCOUNT`
+- 属性タイプをシンプルに保つ
 
-See [syntax-guide.md](references/syntax-guide.md) for complete ER diagram syntax.
+完全なER図の構文については [syntax-guide.md](references/syntax-guide.md) を参照。
 
-## Error Prevention Workflow
+## エラー防止ワークフロー
 
-Before finalizing any Mermaid diagram:
+Mermaid図を最終化する前に：
 
-1. **Check for HTML tags** - Search for `<br`, `<div`, or any `<` character
-2. **Check for style directives** - Search for `style`, `fill:`, `stroke:`
-3. **Check labels** - Ensure all text is concise (no manual line breaks)
-4. **Check special chars** - Escape or quote labels with `:`, `#`, `{}`, `[]`, `()`
-5. **Verify syntax** - Match exactly against patterns in syntax-guide.md
+1. **HTMLタグを確認** — `<br`、`<div`、または任意の `<` 文字を検索する
+2. **スタイルディレクティブを確認** — `style`、`fill:`、`stroke:` を検索する
+3. **ラベルを確認** — すべてのテキストが簡潔であることを確認する（手動の改行なし）
+4. **特殊文字を確認** — `:`、`#`、`{}`、`[]`、`()` を含むラベルをエスケープまたはクォートする
+5. **構文を検証** — syntax-guide.md のパターンと正確に一致させる
 
-## Common Fixes
+## 一般的な修正
 
-| Error Pattern | Fix |
-|--------------|-----|
+| エラーパターン | 修正方法 |
+| ------------ | ------- |
 | `participant A<br/>B` | `participant AB as A B` |
-| `A->>B: Long<br/>text` | `A->>B: Long text` (keep single line) |
-| `style A fill:#f00` | Delete entirely (no styling) |
-| `A[Label #1]` | `A["Label #1"]` (quote special chars) |
-| `A --> B: text<br/>more` | Split into two arrows or use Note |
+| `A->>B: Long<br/>text` | `A->>B: Long text`（一行に保つ） |
+| `style A fill:#f00` | 完全に削除（スタイリングなし） |
+| `A[Label #1]` | `A["Label #1"]`（特殊文字をクォート） |
+| `A --> B: text<br/>more` | 2つの矢印に分割するかNoteを使用 |
 
-## Resources
+## リソース
 
 ### references/syntax-guide.md
 
-Comprehensive syntax reference with:
+以下を含む包括的な構文リファレンス：
 
-- Detailed syntax for all diagram types
-- Common pitfalls with examples
-- Validation checklist
-- Quick reference for diagram type selection
+- すべての図タイプの詳細な構文
+- 例を含む一般的な落とし穴
+- バリデーションチェックリスト
+- 図タイプ選択のクイックリファレンス
 
-Load this file when encountering syntax questions or edge cases.
+構文の質問やエッジケースに遭遇した際にこのファイルを読み込む。

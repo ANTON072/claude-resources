@@ -1,106 +1,110 @@
-# Mermaid Syntax Guide
+# Mermaid構文ガイド
 
-## Common Syntax Rules (ALL Diagram Types)
+## 共通の構文ルール（すべての図タイプ）
 
-### Critical Rules to Avoid Errors
+### エラーを避けるための重要なルール
 
-1. **NO HTML tags in text** - Never use `<br/>`, `<br>`, or any HTML
-  - ❌ `participant User<br/>Browser`
-  - ✅ `participant UserBrowser as User Browser`
+1. **テキスト内のHTMLタグ禁止** — `<br/>`、`<br>`、または任意のHTMLを使用しない
+   - ❌ `participant User<br/>Browser`
+   - ✅ `participant UserBrowser as User Browser`
 
-2. **Line breaks in labels** - Use escaped newlines or avoid them
-  - ❌ Multi-line text with `<br/>`
-  - ✅ Use short, single-line labels
+2. **ラベル内の改行** — エスケープされた改行を使用するか避ける
+   - ❌ `<br/>` を使った複数行テキスト
+   - ✅ 短い一行ラベルを使用する
 
-3. **Special characters** - Escape or avoid: `#`, `{`, `}`, `[`, `]`, `(`, `)`
-  - ❌ `A[Label with (parentheses)]`
-  - ✅ `A[Label with parentheses]`
+3. **特殊文字** — エスケープするか避ける：`#`、`{`、`}`、`[`、`]`、`(`、`)`
+   - ❌ `A[Label with (parentheses)]`
+   - ✅ `A[Label with parentheses]`
 
-4. **NO style/color directives** (per CLAUDE.md)
-  - ❌ `style A fill:#ff0000`
-  - ❌ `classDef myClass fill:#f9f,stroke:#333`
-  - ✅ Use default styling only
+4. **スタイル/カラーディレクティブ禁止**（CLAUDE.mdより）
+   - ❌ `style A fill:#ff0000`
+   - ❌ `classDef myClass fill:#f9f,stroke:#333`
+   - ✅ デフォルトのスタイリングのみ使用
 
-5. **Quotes** - Use for labels with special characters
-  - `A["Label with: special chars"]`
+5. **クォート** — 特殊文字を含むラベルに使用する
+   - `A["Label with: special chars"]`
 
-## Sequence Diagrams
+## シーケンス図
 
-### Basic Syntax
+### 基本構文
 
 ```mermaid
 sequenceDiagram
     participant A
     participant B as Long Name
 
-    A->>B: Message
-    B-->>A: Response
+    A->>B: メッセージ
+    B-->>A: レスポンス
 
-    Note over A: Single note
-    Note over A,B: Spanning note
+    Note over A: 単一のメモ
+    Note over A,B: 複数にまたがるメモ
 ```
 
-### Arrow Types
+### 矢印タイプ
 
-- `->` Solid line without arrow
-- `-->` Dotted line without arrow
-- `->>` Solid line with arrow
-- `-->>` Dotted line with arrow
+- `->` 矢印なしの実線
+- `-->` 矢印なしの点線
+- `->>` 矢印付きの実線
+- `-->>` 矢印付きの点線
 
-### Common Pitfalls
+### 一般的な落とし穴
 
-❌ **Don't use br tags in participant names:**
+❌ **参加者名にbrタグを使わない：**
+
 ```mermaid
 participant Auth0<br/>Server
 ```
 
-✅ **Use aliases instead:**
+✅ **代わりにエイリアスを使用する：**
+
 ```mermaid
 participant Auth0 as Auth0 Server
 ```
 
-❌ **Don't use br in messages:**
+❌ **メッセージにbrを使わない：**
+
 ```mermaid
 A->>B: POST /token<br/>{ code: "..." }
 ```
 
-✅ **Keep messages concise:**
+✅ **メッセージを簡潔に保つ：**
+
 ```mermaid
 A->>B: POST /token (code parameter)
 ```
 
-### Advanced Features
+### 高度な機能
 
 ```mermaid
 sequenceDiagram
     autonumber
 
     activate A
-    A->>B: Request
+    A->>B: リクエスト
     deactivate A
 
-    alt Success
+    alt 成功
         B-->>A: OK
-    else Failure
-        B-->>A: Error
+    else 失敗
+        B-->>A: エラー
     end
 
-    loop Every hour
-        A->>B: Poll
+    loop 1時間ごと
+        A->>B: ポーリング
     end
 ```
 
-## Flowcharts
+## フローチャート
 
-### Basic Syntax
+### 基本構文
 
 ```mermaid
 flowchart TD
-    A[Rectangle]
-    B(Rounded)
-    C{Diamond}
-    D([Stadium])
-    E[[Subroutine]]
+    A[矩形]
+    B(角丸)
+    C{ダイアモンド}
+    D([スタジアム])
+    E[[サブルーチン]]
 
     A --> B
     B --> C
@@ -108,43 +112,47 @@ flowchart TD
     C -->|No| E
 ```
 
-### Direction Options
+### 方向オプション
 
-- `TD` or `TB` - Top to bottom
-- `BT` - Bottom to top
-- `LR` - Left to right
-- `RL` - Right to left
+- `TD` または `TB` — 上から下
+- `BT` — 下から上
+- `LR` — 左から右
+- `RL` — 右から左
 
-### Common Pitfalls
+### 一般的な落とし穴
 
-❌ **Don't use complex labels:**
+❌ **複雑なラベルを使わない：**
+
 ```mermaid
 flowchart TD
-    A[This is a very long label<br/>with line breaks]
+    A[これは非常に長いラベルで<br/>改行があります]
 ```
 
-✅ **Keep labels short:**
+✅ **ラベルを短くする：**
+
 ```mermaid
 flowchart TD
-    A[Short label]
-    B[Another step]
+    A[短いラベル]
+    B[別のステップ]
 ```
 
-❌ **Don't use special chars unescaped:**
+❌ **特殊文字をエスケープせずに使わない：**
+
 ```mermaid
 flowchart TD
     A[Step #1]
 ```
 
-✅ **Use quotes for special chars:**
+✅ **特殊文字にはクォートを使用する：**
+
 ```mermaid
 flowchart TD
     A["Step #1"]
 ```
 
-## Class Diagrams
+## クラス図
 
-### Basic Syntax
+### 基本構文
 
 ```mermaid
 classDiagram
@@ -163,26 +171,27 @@ classDiagram
     Animal <|-- Dog
 ```
 
-### Relationship Types
+### 関係タイプ
 
-- `<|--` Inheritance
-- `*--` Composition
-- `o--` Aggregation
-- `-->` Association
-- `--` Link (solid)
-- `..>` Dependency
-- `..|>` Realization
+- `<|--` 継承
+- `*--` コンポジション
+- `o--` 集約
+- `-->` 関連
+- `--` リンク（実線）
+- `..>` 依存
+- `..|>` 実現
 
-### Visibility Modifiers
+### 可視性修飾子
 
-- `+` Public
-- `-` Private
-- `#` Protected
-- `~` Package/Internal
+- `+` パブリック
+- `-` プライベート
+- `#` プロテクテッド
+- `~` パッケージ/内部
 
-### Common Pitfalls
+### 一般的な落とし穴
 
-❌ **Don't use complex type annotations:**
+❌ **複雑な型注釈を使わない：**
+
 ```mermaid
 classDiagram
     class User {
@@ -190,7 +199,8 @@ classDiagram
     }
 ```
 
-✅ **Simplify types:**
+✅ **型をシンプルにする：**
+
 ```mermaid
 classDiagram
     class User {
@@ -199,9 +209,9 @@ classDiagram
     }
 ```
 
-## State Diagrams
+## ステート図
 
-### Basic Syntax
+### 基本構文
 
 ```mermaid
 stateDiagram-v2
@@ -213,7 +223,7 @@ stateDiagram-v2
     Failed --> [*]
 ```
 
-### Composite States
+### 複合ステート
 
 ```mermaid
 stateDiagram-v2
@@ -228,23 +238,25 @@ stateDiagram-v2
     Active --> [*]
 ```
 
-### Common Pitfalls
+### 一般的な落とし穴
 
-❌ **Don't use special chars in state names:**
+❌ **ステート名に特殊文字を使わない：**
+
 ```mermaid
 stateDiagram-v2
     [*] --> State#1
 ```
 
-✅ **Use alphanumeric names:**
+✅ **英数字の名前を使用する：**
+
 ```mermaid
 stateDiagram-v2
     [*] --> State1
 ```
 
-## Entity Relationship Diagrams
+## ER図（エンティティリレーションシップ図）
 
-### Basic Syntax
+### 基本構文
 
 ```mermaid
 erDiagram
@@ -265,43 +277,45 @@ erDiagram
     }
 ```
 
-### Relationship Cardinality
+### 関係のカーディナリティ
 
-- `||--||` One to one
-- `||--o{` One to many
-- `}o--o{` Many to many
-- `||--|{` One to exactly one
+- `||--||` 一対一
+- `||--o{` 一対多
+- `}o--o{` 多対多
+- `||--|{` 一対正確に一
 
-### Common Pitfalls
+### 一般的な落とし穴
 
-❌ **Don't use spaces in entity names:**
+❌ **エンティティ名にスペースを使わない：**
+
 ```mermaid
 erDiagram
     USER ACCOUNT ||--o{ ORDER : places
 ```
 
-✅ **Use hyphens or camelCase:**
+✅ **ハイフンまたはcamelCaseを使用する：**
+
 ```mermaid
 erDiagram
     USER-ACCOUNT ||--o{ ORDER : places
 ```
 
-## Validation Checklist
+## バリデーションチェックリスト
 
-Before finalizing a Mermaid diagram, verify:
+Mermaid図を最終化する前に確認する：
 
-- [ ] No `<br/>` or HTML tags anywhere
-- [ ] No `style`, `fill`, or `stroke` directives
-- [ ] All participant/node names are simple (no special chars)
-- [ ] Line breaks are avoided or properly escaped
-- [ ] Quotes used for labels with special characters
-- [ ] Diagram type matches user requirements
-- [ ] Syntax follows the exact patterns above
+- [ ] どこにも `<br/>` やHTMLタグがない
+- [ ] `style`、`fill`、`stroke` ディレクティブがない
+- [ ] すべての参加者/ノード名がシンプル（特殊文字なし）
+- [ ] 改行が避けられているか適切にエスケープされている
+- [ ] 特殊文字を含むラベルにクォートが使用されている
+- [ ] 図のタイプがユーザーの要件に合っている
+- [ ] 構文が上記のパターンに正確に従っている
 
-## Quick Reference: When to Use Each Diagram Type
+## クイックリファレンス：各図タイプの使用場面
 
-- **Sequence**: Time-based interactions, API flows, authentication flows
-- **Flowchart**: Decision trees, processes, algorithms
-- **Class**: Object-oriented design, data structures
-- **State**: State machines, lifecycle management
-- **ER**: Database schemas, data relationships
+- **シーケンス**：時系列のインタラクション、APIフロー、認証フロー
+- **フローチャート**：判断ツリー、プロセス、アルゴリズム
+- **クラス**：オブジェクト指向設計、データ構造
+- **ステート**：ステートマシン、ライフサイクル管理
+- **ER**：データベーススキーマ、データの関係

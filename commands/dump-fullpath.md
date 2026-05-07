@@ -1,30 +1,30 @@
 ---
 name: dump-fullpath
-description: Output the full absolute path of a file mentioned in the previous message.
+description: 直前のメッセージで言及されたファイルの完全な絶対パスを出力する。
 disable-model-invocation: true
 ---
 
-# Dump Full Path
+# フルパスの出力
 
-Output the full absolute path of a file from the previous context.
+直前のコンテキストにあるファイルの完全な絶対パスを出力します。
 
-## Instructions
+## 手順
 
-1. Look at the previous message or recent context
-2. Identify the file path that was mentioned (relative or partial)
-3. Output ONLY the full absolute path, nothing else
+1. 直前のメッセージや最近のコンテキストを確認する
+2. 言及されたファイルパス（相対パスまたは部分的なパス）を特定する
+3. 完全な絶対パスのみを出力する
 
-## Output Format
+## 出力フォーマット
 
-Output the absolute path on a single line with no additional text:
+追加のテキストなしに絶対パスを1行で出力する：
 
 ```
 /Users/username/path/to/file.ext
 ```
 
-## Example
+## 例
 
-If the previous message mentioned `src/components/Button.tsx`:
+直前のメッセージで `src/components/Button.tsx` が言及されていた場合：
 
 ```
 /Users/username/my-project/src/components/Button.tsx

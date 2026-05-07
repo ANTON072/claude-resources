@@ -1,142 +1,142 @@
 ---
 name: pr-revise
-description: "Update an existing PR's title and description to reflect the full implementation. Use when: (1) User says 'revise pr', 'update pr description', 'pr revise', (2) Additional work was done after the PR was created and the title/body no longer matches, (3) User wants to sync PR metadata with the branch state."
+description: "既存のPRのタイトルと説明を完全な実装を反映するように更新する。使用タイミング：(1) ユーザーが「PRを修正」「PR説明を更新」「pr revise」と言った場合、(2) PRが作成された後に追加作業が行われ、タイトル/本文が一致しなくなった場合、(3) ユーザーがブランチの状態にPRのメタデータを同期させたい場合。"
 ---
 
-# PR Revise
+# PR修正
 
-Update an existing PR's title and description to accurately reflect the full implementation, not just the original scope.
+既存のPRのタイトルと説明を、元のスコープだけでなく完全な実装を正確に反映するように更新します。
 
-## Prerequisites
+## 前提条件
 
-- Current branch must have an open PR
-- If no PR is found, abort with a message: "No PR found for the current branch."
+- 現在のブランチにはオープンなPRがある必要がある
+- PRが見つからない場合は「現在のブランチにPRが見つかりません」というメッセージで中止する
 
-## Step 1: Gather PR and Branch Context
+## ステップ1：PRとブランチのコンテキストを収集する
 
 ```bash
-# Get current branch
+# 現在のブランチを取得
 BRANCH=$(git branch --show-current)
 
-# Fetch latest
+# 最新を取得
 git fetch origin
 
-# Get PR details
+# PRの詳細を取得
 gh pr view "$BRANCH" --json number,title,body,baseRefName,headRefName
 ```
 
-Record the PR number, current title, current body, and base branch.
+PR番号、現在のタイトル、現在の本文、ベースブランチを記録する。
 
-## Step 2: Analyze Full Implementation
+## ステップ2：完全な実装を分析する
 
-Review ALL changes in the PR — not just recent commits:
+PRのすべての変更を確認する — 最近のコミットだけでなく：
 
 ```bash
-BASE_BRANCH=<baseRefName from step 1>
+BASE_BRANCH=<ステップ1のbaseRefName>
 
-# All commits in the PR
+# PRのすべてのコミット
 git log "origin/$BASE_BRANCH".."$BRANCH" --oneline
 
-# Full diff stat
+# 完全なdiff統計
 git diff "origin/$BASE_BRANCH"..."$BRANCH" --stat
 
-# Full diff for understanding
+# 理解のための完全なdiff
 git diff "origin/$BASE_BRANCH"..."$BRANCH"
 ```
 
-Read the diff carefully. Understand:
+diffを注意深く読む。以下を理解する：
 
-- What features were added
-- What was refactored or fixed
-- What files were created, modified, or deleted
-- The overall scope and purpose of the changes
+- どんな機能が追加されたか
+- 何がリファクタリングまたは修正されたか
+- どのファイルが作成、変更、または削除されたか
+- 変更の全体的なスコープと目的
 
-## Step 3: Draft New Title and Description
+## ステップ3：新しいタイトルと説明を下書きする
 
-**Optional: Copilot-assisted body draft**
+**オプション：Copilotによる本文の下書き**
 
-Before drafting manually, attempt to get a Copilot-drafted body:
+手動で下書きする前に、Copilotによる本文の下書きを試みる：
 
 ```bash
-BASE_BRANCH=<baseRefName from step 1>
+BASE_BRANCH=<ステップ1のbaseRefName>
 DRAFT=$($HOME/.claude/skills/gco/scripts/gco-pr-body.sh "$BASE_BRANCH" 2>/dev/null || true)
 ```
 
-If `$DRAFT` is non-empty, use it as the starting point for the body. Claude must still review and adjust it — fill any gaps, fix inaccuracies, and ensure tone/completeness. If the script fails or returns empty, draft directly as below.
+`$DRAFT` が空でない場合は、本文の出発点として使用する。Claudeは必ずそれを確認・調整する — 抜けを補完し、不正確な点を修正し、トーン/完全性を確保する。スクリプトが失敗または空を返した場合は、以下のように直接下書きする。
 
 ---
 
-Based on the full diff analysis:
+完全なdiff分析に基づいて：
 
-**Title**: Write a concise PR title (under 70 chars) that captures the overall scope. If the PR covers multiple concerns, summarize the primary theme.
+**タイトル**：全体的なスコープをとらえた簡潔なPRタイトルを書く（70文字未満）。PRが複数の懸念事項をカバーしている場合は、主なテーマをまとめる。
 
-**Description**: Write a comprehensive PR body using this format:
+**説明**：このフォーマットで包括的なPR本文を書く：
 
 ```markdown
-## Summary
-<2-4 bullet points covering the main changes>
+## サマリー
+<主要な変更を2〜4箇条書き>
 
-## Changes
-<Detailed list of what was done, grouped by category if needed>
+## 変更内容
+<行われたことの詳細リスト、必要に応じてカテゴリ別にグループ化>
 
-## Test Plan
-<How to verify the changes work correctly>
+## テストプラン
+<変更が正しく動作することを確認する方法>
 ```
 
-If the original body contained issue references (e.g., `Closes #123`, `Fixes #456`), preserve them in the new body.
+元の本文にIssue参照（例：`Closes #123`、`Fixes #456`）が含まれていた場合は、新しい本文にも保持する。
 
-## Step 4: Show the User What Will Change
+## ステップ4：変更内容をユーザーに表示する
 
-Present the proposed updates clearly:
+提案される更新を明確に提示する：
 
 ```
-Current title: <old title>
-New title:     <new title>
+現在のタイトル: <古いタイトル>
+新しいタイトル: <新しいタイトル>
 
-Current body:
-<old body>
+現在の本文:
+<古い本文>
 
-New body:
-<new body>
+新しい本文:
+<新しい本文>
 ```
 
-Ask the user to confirm before applying.
+適用前にユーザーに確認を求める。
 
-## Step 5: Apply Updates
+## ステップ5：更新を適用する
 
 ```bash
-PR_NUMBER=<number from step 1>
+PR_NUMBER=<ステップ1の番号>
 
-# Update title
-gh pr edit "$PR_NUMBER" --title "<new title>"
+# タイトルを更新
+gh pr edit "$PR_NUMBER" --title "<新しいタイトル>"
 
-# Update body
+# 本文を更新
 gh pr edit "$PR_NUMBER" --body "$(cat <<'EOF'
-<new body content>
+<新しい本文の内容>
 EOF
 )"
 ```
 
-Report the updated PR URL when done.
+完了したら更新されたPR URLを報告する。
 
-## Important Notes
+## 重要な注意事項
 
-- Always analyze the FULL diff against the base branch, not just recent commits
-- Preserve issue references from the original body
-- Do not change the PR's base branch or draft status
-- If the diff is very large, use `--stat` first to get an overview, then read key files selectively
-- Copilot output is NEVER applied verbatim — always review and adjust before showing to user
+- 最近のコミットだけでなく、ベースブランチに対する完全なdiffを常に分析する
+- 元の本文のIssue参照を保持する
+- PRのベースブランチやドラフトステータスは変更しない
+- diffが非常に大きい場合は、最初に `--stat` で概要を確認し、次に主要なファイルを選択的に読む
+- Copilotの出力はそのまま適用しない — ユーザーに見せる前に必ず確認・調整する
 
-## Copilot draft audit (pr-* skills)
+## Copilot下書き監査（pr-* スキル）
 
-Disposition of every `pr-*` skill regarding the Copilot-draft path:
+Copilot下書きパスに関する各 `pr-*` スキルの方針：
 
-| Skill | Disposition |
-|---|---|
-| `/pr` | **Adopt** (this sub-task) |
-| `/pr-revise` | **Adopt** (this sub-task) |
-| `/pr-complete` | Skip — merge/completion workflow, not text generation |
-| `/pr-split` | Skip — structural rearrangement, not text generation |
-| `/pr-recreate` | Skip — history cleanup, not text generation |
-| `/pr-make-suggestion-edit` | Skip — applies code suggestions as edits, different domain |
-| `/pr-make-suggestion-to-pr` | Defer — creates new PRs from suggestion edits; future candidate, track in a follow-up issue |
+| スキル | 方針 |
+| ----- | ---- |
+| `/pr` | **採用**（このサブタスク） |
+| `/pr-revise` | **採用**（このサブタスク） |
+| `/pr-complete` | スキップ — マージ/完了ワークフロー、テキスト生成ではない |
+| `/pr-split` | スキップ — 構造的な再配置、テキスト生成ではない |
+| `/pr-recreate` | スキップ — 履歴のクリーンアップ、テキスト生成ではない |
+| `/pr-make-suggestion-edit` | スキップ — コードの提案を編集として適用する、異なるドメイン |
+| `/pr-make-suggestion-to-pr` | 延期 — 提案の編集から新しいPRを作成する；将来の候補、フォローアップIssueで追跡 |

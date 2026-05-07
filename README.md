@@ -1,50 +1,50 @@
 # claude-resources
 
-My personal [Claude Code](https://docs.anthropic.com/en/docs/claude-code) configuration: custom commands, skills, agents, hooks, and scripts.
+私の個人的な [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 設定：カスタムコマンド、スキル、エージェント、フック、スクリプト。
 
-## What's in here
+## 内容
 
-| Directory | Description |
-|-----------|-------------|
-| `commands/` | Custom slash commands (`/commits`, `/pr`, `/purge-private-info`, etc.) |
-| `skills/` | Skills — modular packages that extend Claude's capabilities |
-| `agents/` | Custom subagent definitions (code-reviewer, tdd-developer, etc.) |
-| `hooks/` | Hook scripts (e.g., IFTTT notification on stop) |
-| `doc/` | Docusaurus documentation site for browsing the resources |
-| `CLAUDE.md` | Global instructions applied to all projects |
+| ディレクトリ | 説明 |
+| ----------- | ---- |
+| `commands/` | カスタムスラッシュコマンド（`/commits`、`/pr`、`/purge-private-info` など） |
+| `skills/` | スキル — Claudeの機能を拡張するモジュラーパッケージ |
+| `agents/` | カスタムサブエージェント定義（code-reviewer、tdd-developer など） |
+| `hooks/` | フックスクリプト（例：停止時のIFTTT通知） |
+| `doc/` | リソースを閲覧するためのDocusaurusドキュメントサイト |
+| `CLAUDE.md` | すべてのプロジェクトに適用されるグローバル指示 |
 
-## Usage
+## 使い方
 
-### Option A: Install as a Claude Code plugin (recommended)
+### オプションA：Claude Codeプラグインとしてインストール（推奨）
 
-The repo ships with a Claude Code marketplace manifest. Install everything in one shot:
+このリポジトリにはClaude Codeマーケットプレイスマニフェストが含まれています。一度にすべてをインストールできます：
 
 ```
 /plugin marketplace add takazudo/claude-resources
 /plugin install claude-resources@takazudo-claude-resources
 ```
 
-After install, Claude Code will see all bundled commands, skills, agents, and hooks. Use `/plugin disable` if you want to opt out of any of them.
+インストール後、Claude Codeはバンドルされたすべてのコマンド、スキル、エージェント、フックを認識します。不要なものは `/plugin disable` で無効化できます。
 
-### Option B: Manual copy
+### オプションB：手動コピー
 
-Browse and borrow anything useful. To use a skill or command in your own setup, copy it into your `$HOME/.claude/` directory:
+必要なものを参照してお使いください。スキルやコマンドを自分の環境で使うには、`$HOME/.claude/` ディレクトリにコピーします：
 
 ```
 $HOME/.claude/
-├── commands/    # place command .md files here
-├── skills/      # place skill directories here
-├── agents/      # place agent .md files here
-├── hooks/       # place hook scripts here
-└── scripts/     # place utility scripts here
+├── commands/    # コマンド .md ファイルをここに配置
+├── skills/      # スキルディレクトリをここに配置
+├── agents/      # エージェント .md ファイルをここに配置
+├── hooks/       # フックスクリプトをここに配置
+└── scripts/     # ユーティリティスクリプトをここに配置
 ```
 
-Refer to the [Claude Code documentation](https://docs.anthropic.com/en/docs/claude-code) for details on how commands, skills, and agents work.
+コマンド、スキル、エージェントの詳細については[Claude Codeドキュメント](https://docs.anthropic.com/en/docs/claude-code)を参照してください。
 
-## Disclaimer
+## 免責事項
 
-This is my personal configuration, shared as-is. Some resources may reference my specific environment or workflows. Use at your own risk — review and adapt to your own needs before using.
+これは私の個人設定で、現状のまま共有しています。一部のリソースは私固有の環境やワークフローを参照している場合があります。使用は自己責任で — 使用前に確認し、自分の環境に合わせて調整してください。
 
-## License
+## ライセンス
 
 MIT
