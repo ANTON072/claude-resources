@@ -43,7 +43,6 @@
 
 | MCP | 用途 | 設定方法 |
 | --- | ---- | -------- |
-| [Notion](https://mcp.notion.com/mcp) | NotionワークスペースへのRead/Write | `claude mcp add --transport http notion https://mcp.notion.com/mcp` |
 | [Playwright](https://github.com/microsoft/playwright-mcp) | ブラウザ操作・UIテスト（`frontend-developer` エージェント） | `claude mcp add playwright npx @playwright/mcp@latest` |
 | [Context7](https://github.com/upstash/context7-mcp) | ライブラリ/フレームワークのドキュメント参照（`frontend-developer`、`code-reviewer` エージェント） | `claude mcp add context7 npx @upstash/context7-mcp@latest` |
 | [Serena](https://github.com/oraios/serena) | コード構造・依存関係の解析（`code-reviewer` エージェント） | `claude mcp add serena uvx serena` |
