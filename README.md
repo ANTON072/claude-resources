@@ -46,8 +46,6 @@
 | MCP | 用途 | 設定方法 |
 | --- | ---- | -------- |
 | [Playwright](https://github.com/microsoft/playwright-mcp) | ブラウザ操作・UIテスト（`frontend-developer` エージェント） | `claude mcp add playwright npx @playwright/mcp@latest` |
-| [Context7](https://github.com/upstash/context7-mcp) | ライブラリ/フレームワークのドキュメント参照（`frontend-developer`、`code-reviewer` エージェント） | `claude mcp add context7 npx @upstash/context7-mcp@latest` |
-| [Serena](https://github.com/oraios/serena) | コード構造・依存関係の解析（`code-reviewer` エージェント） | `claude mcp add serena uvx serena` |
 
 > MCPの追加はグローバル設定に反映されます。詳細は `claude mcp --help` を参照してください。
 
