@@ -39,6 +39,14 @@
 | `researcher` | opus | リサーチャー |
 | `text-fixer` | haiku | テキスト修正エージェント |
 
+## 必要なツール
+
+一部のコマンドやスキルは以下のCLIツールに依存しています。
+
+| ツール | 用途 | インストール方法 |
+| ------ | ---- | -------------- |
+| [difit](https://github.com/yoshiko-pg/difit) | コミット後の差分レビュー画面（`/git-commit` コマンド、`difit` / `difit-review` スキル） | [公式リポジトリ](https://github.com/yoshiko-pg/difit)を参照 |
+
 ## 必要なMCP
 
 一部のエージェントやスキルは以下のMCPサーバーに依存しています。
@@ -46,6 +54,7 @@
 | MCP | 用途 | 設定方法 |
 | --- | ---- | -------- |
 | [Playwright](https://github.com/microsoft/playwright-mcp) | ブラウザ操作・UIテスト（`frontend-developer` エージェント） | `claude mcp add playwright npx @playwright/mcp@latest` |
+| [difit](https://github.com/yoshiko-pg/difit) | 差分レビュー画面（`/git-commit` コマンド、`difit` / `difit-review` スキル） | [公式リポジトリ](https://github.com/yoshiko-pg/difit)を参照 |
 
 > MCPの追加はグローバル設定に反映されます。詳細は `claude mcp --help` を参照してください。
 
